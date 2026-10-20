@@ -22,6 +22,19 @@ CPU-bound and 3 I/O-bound processes (Trace 3).
 It takes about 15 seconds. It checks the trace's SHA-256 against the value
 recorded in the lab, then rebuilds every table and figure in the report.
 
+## Round 2: baselines, eBPF agent, margin sweep, real-program loop, sched_ext (20 Oct, evening)
+
+    python3 src/baselines.py                                    # Table II (AR / ARIMA / MLP / nonlinear EDMD)
+    cd closedloop/bpf && make && cd ../..                       # eBPF observer + C agent (needs clang, libbpf-dev, bpftool)
+    sudo python3 closedloop/run_closedloop.py --cpus 0 --hogs 3 --reqs 4 --reps 6 --secs 20 \
+        --policies stock,oracle,oracle1.5,oracle2,oracle3,bpf_ewma_1,bpf_ewma_1.5,bpf_ewma_2,bpf_ewma_3,bpf_koopman_1,bpf_koopman_1.5,bpf_koopman_2,bpf_koopman_3 \
+        --out data/closedloop/sweep_1cpu
+    sudo python3 closedloop/real_closed.py --reps 10 --secs 20 --out data/closedloop/real_1cpu
+    python3 closedloop/analyse_real_closed.py data/closedloop/real_1cpu
+    python3 closedloop/plot_sweep.py                            # Fig. 4
+
+`kit/sched_ext/` holds the sched_ext policy for the lab (compiles, not yet run). Details: RESULTS_EXTRA.md, sections 5-9.
+
 ## Closed loop, real programs, intervals and cost (added 20 Oct)
 
 See **RESULTS_EXTRA.md**. Regenerate with:

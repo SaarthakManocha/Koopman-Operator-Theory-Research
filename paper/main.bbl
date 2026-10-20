@@ -34,6 +34,14 @@ I.~Stoica and H.~Abdel-Wahab, ``Earliest eligible virtual deadline first: A
 J.~Corbet, ``An {EEVDF} {CPU} scheduler for {Linux},'' LWN.net, Mar. 2023,
   \url{https://lwn.net/Articles/925371/}.
 
+\bibitem{corbet2024}
+------, ``Completing the {EEVDF} scheduler,'' LWN.net, Apr. 2024,
+  \url{https://lwn.net/Articles/969062/}, 2024.
+
+\bibitem{eevdfdoc}
+{The Linux kernel documentation}, ``{EEVDF} scheduler,''
+  \url{https://docs.kernel.org/scheduler/sched-eevdf.html}, 2024.
+
 \bibitem{koopman1931}
 B.~O. Koopman, ``Hamiltonian systems and transformation in {Hilbert} space,''
   \emph{Proc. Natl. Acad. Sci. USA}, vol.~17, no.~5, pp. 315--318, 1931.
@@ -52,32 +60,26 @@ S.~L. Brunton, M.~Budi\v{s}i\'c, E.~Kaiser, and J.~N. Kutz, ``Modern {Koopman}
 P.~J. Schmid, ``Dynamic mode decomposition of numerical and experimental
   data,'' \emph{J. Fluid Mech.}, vol. 656, pp. 5--28, 2010.
 
-\bibitem{rowley2009}
-C.~W. Rowley, I.~Mezi\'c, S.~Bagheri, P.~Schlatter, and D.~S. Henningson,
-  ``Spectral analysis of nonlinear flows,'' \emph{J. Fluid Mech.}, vol. 641,
-  pp. 115--127, 2009.
-
-\bibitem{tu2014}
-J.~H. Tu, C.~W. Rowley, D.~M. Luchtenburg, S.~L. Brunton, and J.~N. Kutz, ``On
-  dynamic mode decomposition: Theory and applications,'' \emph{J. Comput.
-  Dyn.}, vol.~1, no.~2, pp. 391--421, 2014.
-
 \bibitem{williams2015}
 M.~O. Williams, I.~G. Kevrekidis, and C.~W. Rowley, ``A data-driven
   approximation of the {Koopman} operator: Extending dynamic mode
   decomposition,'' \emph{J. Nonlinear Sci.}, vol.~25, no.~6, pp. 1307--1346,
   2015.
 
-\bibitem{drishti2026}
-S.~Manocha, R.~R. Lingala, C.~S.~M. Sadhana, S.~Kedia, C.~S.~M. Sahithi, and
-  P.~Vemuri, ``{Koopman} operator theory for network traffic dynamics: An
-  inspectable linear world model for attack forecasting,'' 2026, manuscript,
-  Chaitanya Bharathi Institute of Technology.
+\bibitem{arbabi2017}
+H.~Arbabi and I.~Mezi\'c, ``Ergodic theory, dynamic mode decomposition, and
+  computation of spectral properties of the {Koopman} operator,'' \emph{SIAM J.
+  Appl. Dyn. Syst.}, vol.~16, no.~4, pp. 2096--2126, 2017.
 
-\bibitem{eigenworld}
-S.~Manocha, ``{EIGENWORLD}: Causal-topological intelligence for complex
-  systems,'' Source code, \url{https://github.com/SaarthakManocha/eigenworld},
-  2026.
+\bibitem{pan2020}
+S.~Pan and K.~Duraisamy, ``On the structure of time-delay embedding in linear
+  models of non-linear dynamical systems,'' \emph{Chaos}, vol.~30, no.~7, p.
+  073135, 2020.
+
+\bibitem{tu2014}
+J.~H. Tu, C.~W. Rowley, D.~M. Luchtenburg, S.~L. Brunton, and J.~N. Kutz, ``On
+  dynamic mode decomposition: Theory and applications,'' \emph{J. Comput.
+  Dyn.}, vol.~1, no.~2, pp. 391--421, 2014.
 
 \bibitem{korda2018}
 M.~Korda and I.~Mezi\'c, ``On convergence of extended dynamic mode
@@ -90,24 +92,15 @@ F.~Takens, ``Detecting strange attractors in turbulence,'' in \emph{Dynamical
   Mathematics.\hskip 1em plus 0.5em minus 0.4em\relax Springer, 1981, vol. 898,
   pp. 366--381.
 
-\bibitem{arbabi2017}
-H.~Arbabi and I.~Mezi\'c, ``Ergodic theory, dynamic mode decomposition, and
-  computation of spectral properties of the {Koopman} operator,'' \emph{SIAM J.
-  Appl. Dyn. Syst.}, vol.~16, no.~4, pp. 2096--2126, 2017.
-
 \bibitem{dawson2016}
 S.~T.~M. Dawson, M.~S. Hemati, M.~O. Williams, and C.~W. Rowley,
   ``Characterizing and correcting for the effect of sensor noise in the dynamic
   mode decomposition,'' \emph{Exp. Fluids}, vol.~57, no.~3, p.~42, 2016.
 
-\bibitem{kutz2016}
-J.~N. Kutz, S.~L. Brunton, B.~W. Brunton, and J.~L. Proctor, \emph{Dynamic Mode
-  Decomposition: Data-Driven Modeling of Complex Systems}.\hskip 1em plus 0.5em
-  minus 0.4em\relax Philadelphia, PA: SIAM, 2016.
-
-\bibitem{mann2016}
-J.~Mann and J.~N. Kutz, ``Dynamic mode decomposition for financial trading
-  strategies,'' \emph{Quant. Finance}, vol.~16, no.~11, pp. 1643--1655, 2016.
+\bibitem{negi2005}
+A.~Negi and P.~K. Kumar, ``Applying machine learning techniques to improve
+  {Linux} process scheduling,'' in \emph{Proc. IEEE Region 10 Conf. (TENCON)},
+  2005.
 
 \bibitem{harchol2003}
 M.~Harchol-Balter, B.~Schroeder, N.~Bansal, and M.~Agrawal, ``Size-based
@@ -118,31 +111,10 @@ M.~Harchol-Balter, B.~Schroeder, N.~Bansal, and M.~Agrawal, ``Size-based
 {The Linux kernel documentation}, ``Extensible scheduler class (sched\_ext),''
   \url{https://docs.kernel.org/scheduler/sched-ext.html}, 2024.
 
-\bibitem{perfsched}
-{Linux perf}, ``perf-sched(1): Tool to trace/measure scheduler properties
-  (latencies),'' Linux manual page.
-
-\bibitem{ftrace}
-{The Linux kernel documentation}, ``ftrace -- function tracer,''
-  \url{https://docs.kernel.org/trace/ftrace.html}.
-
-\bibitem{schedstats}
-------, ``Scheduler statistics,''
-  \url{https://docs.kernel.org/scheduler/sched-stats.html}.
-
-\bibitem{scheffer2009}
-M.~Scheffer, J.~Bascompte, W.~A. Brock, V.~Brovkin, S.~R. Carpenter, V.~Dakos,
-  H.~Held, E.~H. van Nes, M.~Rietkerk, and G.~Sugihara, ``Early-warning signals
-  for critical transitions,'' \emph{Nature}, vol. 461, pp. 53--59, 2009.
-
-\bibitem{coifman2006}
-R.~R. Coifman and S.~Lafon, ``Diffusion maps,'' \emph{Appl. Comput. Harmon.
-  Anal.}, vol.~21, no.~1, pp. 5--30, 2006.
-
-\bibitem{giannakis2012}
-D.~Giannakis and A.~J. Majda, ``Nonlinear {Laplacian} spectral analysis for
-  time series with intermittency and low-frequency variability,'' \emph{Proc.
-  Natl. Acad. Sci. USA}, vol. 109, no.~7, pp. 2222--2227, 2012.
+\bibitem{wang2025mos}
+X.~Wang, S.~Jia, J.~Cao, Z.~Huang, and M.~Song, ``Mixture-of-schedulers: An
+  adaptive scheduling agent as a learned router for expert policies,''
+  arXiv:2511.11628, 2025.
 
 \bibitem{kunsch1989}
 H.~R. K\"unsch, ``The jackknife and the bootstrap for general stationary
@@ -161,9 +133,11 @@ A.~N. Angelopoulos and S.~Bates, ``Conformal prediction: A gentle
   introduction,'' \emph{Found. Trends Mach. Learn.}, vol.~16, no.~4, pp.
   494--591, 2023.
 
-\bibitem{eevdfdoc}
-{The Linux kernel documentation}, ``{EEVDF} scheduler,''
-  \url{https://docs.kernel.org/scheduler/sched-eevdf.html}, 2024.
+\bibitem{drishti2026}
+S.~Manocha, R.~R. Lingala, C.~S.~M. Sadhana, S.~Kedia, C.~S.~M. Sahithi, and
+  P.~Vemuri, ``{Koopman} operator theory for network traffic dynamics: An
+  inspectable linear world model for attack forecasting,'' 2026, manuscript,
+  Chaitanya Bharathi Institute of Technology.
 
 \bibitem{sharafaldin2018}
 I.~Sharafaldin, A.~H. Lashkari, and A.~A. Ghorbani, ``Toward generating a new
@@ -175,5 +149,14 @@ I.~Sharafaldin, A.~H. Lashkari, and A.~A. Ghorbani, ``Toward generating a new
 N.~Moustafa and J.~Slay, ``{UNSW-NB15}: A comprehensive data set for network
   intrusion detection systems,'' in \emph{Proc. Military Commun. Inf. Syst.
   Conf. (MilCIS)}, 2015, pp. 1--6.
+
+\bibitem{eigenworld}
+S.~Manocha, ``{EIGENWORLD}: Causal-topological intelligence for complex
+  systems,'' Source code, \url{https://github.com/SaarthakManocha/eigenworld},
+  2026.
+
+\bibitem{coifman2006}
+R.~R. Coifman and S.~Lafon, ``Diffusion maps,'' \emph{Appl. Comput. Harmon.
+  Anal.}, vol.~21, no.~1, pp. 5--30, 2006.
 
 \end{thebibliography}

@@ -164,3 +164,100 @@ At about 35 ns per burst, a Koopman predictor costs less than a context switch (
 
 The bare-metal versions of 1 and 2 are now in the kit (`kit/README_LAB.md`, sections 4–5).
 This includes an 8-CPU closed-loop run with 24 hogs and 32 request tasks.
+
+---
+
+# Round 2 (20 October 2026, evening)
+
+## 5. Is the Koopman predictor more than an autoregressive model? (`src/baselines.py`)
+
+96 tasks: 57 synthetic VM processes, 3 from lab Trace 3, 36 real-program threads. 80/20
+split, one-step forecasts. Results are in `outputs/baselines/summary.txt`.
+
+- **Log-EDMD with 3 delays is numerically a log-AR(3) model.** The median of the
+  largest log-space difference between their forecasts is 1e-3.
+- **Against the textbook EWMA**, every model that uses recent bursts wins by similar
+  amounts:
+
+  | model | median error ratio, all 96 tasks | median error ratio, 36 real threads |
+  |---|---|---|
+  | log-EDMD | 0.88 | 0.71 |
+  | log-AR(p*) (AIC order) | 0.79 | 0.70 |
+  | ARIMA | 0.85 | 0.71 |
+  | MLP | 0.84 | 0.74 |
+  | poly-EDMD | 0.86 | 0.71 |
+  | RFF-EDMD | 0.85 | 0.74 |
+  | gradient boosting | 0.87 | 0.79 |
+
+- **Against log-AR(p*)**, nothing is better:
+  - log-EDMD with 3 delays is 1.5% worse and loses in 75 of 96 tasks;
+  - poly-EDMD and RFF-EDMD tie (Holm p = 0.37 and 0.76);
+  - ARIMA, MLP and gradient boosting are slightly worse.
+- **What matters is the log scale and the number of delays, not nonlinearity.** The
+  AIC-chosen order is most often 10.
+
+## 6. Slice margin sweep with an eBPF observer (`closedloop/bpf/`, `data/closedloop/sweep_1cpu`)
+
+The BPF program on `tp_btf/sched_switch` reports each burst when it ends. A C agent then
+updates the predictor (EWMA, or log-EDMD by recursive least squares) and sets
+slice = c × prediction. The set-up is 1 CPU, 3 hogs and 4 request tasks, 6 paired
+repetitions, 13 policies.
+
+- **Agent cost:**
+  - it uses 0.33% of one CPU, against about 3% for the Python polling agent;
+  - hog throughput is within ±1% of stock.
+- **Short-request response time against stock Linux (2.27 ms):**
+
+  | margin c | 1 | 1.5 | 2 | 3 |
+  |---|---|---|---|---|
+  | oracle | +1.5% | −61% | −44% | −23% |
+  | Koopman | −36% | **−45%** | −37% | −15% |
+  | EWMA | −33% | −41% | −35% | −16% |
+
+- **Mean response over all requests** improves by 5–6% at c = 1.5.
+- **Koopman vs EWMA:**
+  - Koopman is lower in 6/6 paired runs at c = 1 and at c = 1.5 (p = 0.031 each), 5/6
+    at c = 2, and 2/6 at c = 3;
+  - pooled over all margins, 19/24 (p = 0.0035);
+  - its prediction error is 0.77 vs 0.84 ms MAE, and its log-error spread 0.49 vs 0.58.
+- **Note:** the first oracle1.5 and oracle3 runs used factor 1 because of a
+  parsing bug. They were deleted and rerun after the fix.
+
+## 7. Closed loop on real programs (`closedloop/real_closed.py`, `data/closedloop/real_1cpu`)
+
+On CPU 0: a Redis server, a Node.js server, a SQLite worker and 3 CPU hogs. On CPU 1:
+the clients, which time every request. 10 paired repetitions, 6 policies.
+
+Change in mean latency against stock Linux:
+
+| measure | Koopman, c = 1.5 | EWMA, c = 1.5 | hand-set minimum slice |
+|---|---|---|---|
+| Redis, all requests | −31% | −37% | −16% |
+| SQLite point queries | −31% | −8% | −54% |
+| Node.js light requests | −14% (p = 0.01) | −5% (not significant) | −28% |
+
+- The Koopman changes for Redis and SQLite held in 10/10 pairs (p = 0.002).
+- Koopman vs EWMA: 25% better on SQLite point queries (10/10), but 10% worse on Redis
+  (1/10).
+- The following changed by less than 4%, none significant:
+  - mean over all Node.js and SQLite requests;
+  - heavy requests;
+  - 99th percentiles of all three programs.
+- Hogs lost 1% of their CPU time.
+
+## 8. EEVDF simulator (`src/eevdf_sim.py`): not validated, not used
+
+The simulator gets stock-Linux short-request response about 45% too high, and it does
+not reproduce the measured oracle pattern. It is kept only for reference. Scaling
+beyond 2 CPUs is left to the lab.
+
+## 9. sched_ext policy (`kit/sched_ext/`)
+
+`scx_koopman` is a global virtual-time scheduler that orders tasks by virtual time plus
+predicted burst, with slice = margin × prediction. The predictor runs in user space and
+reads bursts from a BPF ring buffer.
+
+- The BPF part compiles against a kernel 7.3 `vmlinux.h`.
+- The user-space part needs a newer bpftool than this machine has.
+- It has not been run. Instructions are in `kit/sched_ext/README.md`, and the
+  closed-loop runner accepts `scx_<pred>_<margin>` policies.

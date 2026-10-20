@@ -59,7 +59,8 @@ int main(int argc, char **argv) {
     s = strtoull(argv[4], 0, 10) * 2654435761ULL + 88172645463325252ULL;
     double period = atof(argv[5]) * 1e-3, mus = log(atof(argv[6])), mul = log(atof(argv[7])), psw = atof(argv[8]);
     int oracle = argc > 9 && !strncmp(argv[9], "oracle", 6);
-    double ofac = (argc > 9 && !strcmp(argv[9], "oracle2")) ? 2.0 : 1.0;   /* oracle2: slice = 2 x burst */
+    /* "oracle" -> slice = burst; "oracleX" -> slice = X times the burst (oracle2, oracle1.5, oracle3) */
+    double ofac = (oracle && argv[9][6]) ? atof(argv[9] + 6) : 1.0;
     { struct sched_attr g; memset(&g, 0, sizeof g);
       if (syscall(SYS_sched_getattr, 0, &g, sizeof g, 0) == 0) SDEF = g.sched_runtime; }
     const double phi = 0.6, sig = 0.35;

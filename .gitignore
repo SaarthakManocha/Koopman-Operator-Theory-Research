@@ -16,3 +16,13 @@ paper/*.bak
 kit.zip
 # coursework report, kept private
 report/
+# generated BPF artefacts
+closedloop/bpf/vmlinux.h
+closedloop/bpf/burst.bpf.o
+closedloop/bpf/burst.skel.h
+closedloop/bpf/cagent
+kit/closedloop/bpf/vmlinux.h
+kit/closedloop/bpf/cagent
+kit/sched_ext/build/
+outputs/baselines/tl_*.pkl
+outputs/baselines_run.log

@@ -50,7 +50,14 @@ the agent's own cost are recorded.
 
     sudo python3 real_programs.py --reps 3 --secs 60 --out captures/real_programs
 
-## 6. Optional: scaling from counters only (5 minutes, no sudo)
+## 6. Koopman scheduler in the kernel (sched_ext), if the kernel supports it (about 45 minutes)
+
+See `sched_ext/README.md`. It builds `scx_koopman`, a scheduler that orders tasks by predicted
+CPU burst, and runs it against stock EEVDF with the same closed-loop test. Also build the eBPF
+agent first (`cd closedloop/bpf && make`) and include `bpf_koopman_1.5,bpf_ewma_1.5` in the
+closed-loop runs of section 4.
+
+## 6b. Optional: scaling from counters only (5 minutes, no sudo)
 
     python3 scale_counters.py --out captures/scale_lab --cores 1 2 4 8 16
 

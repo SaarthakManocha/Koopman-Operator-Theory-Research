@@ -1,0 +1,4 @@
+agent_cpu_s 0.060263
+bursts 3486
+predict_ns 417.4
+default_slice_s 0.001400

@@ -37,6 +37,12 @@ def load_run(d):
     hog = sum(int(open(f).read().split()[1]) for f in glob.glob(f"{d}/hog*.txt"))
     ag = json.load(open(f"{d}/agent.json")) if os.path.exists(f"{d}/agent.json") else {}
     acc = []
+    if os.path.exists(f"{d}/agent.txt"):
+        kv = dict(l.split() for l in open(f"{d}/agent.txt"))
+        ag = {"agent_cpu_s": float(kv["agent_cpu_s"])}
+        bt = np.loadtxt(f"{d}/agent.txt.bursts", ndmin=2)
+        if len(bt):
+            acc.append(np.mean(np.abs(bt[:, 1] - bt[:, 2])) * 1e3)
     for p, hb in ag.get("bursts", {}).items():
         pr = ag["preds"][p]
         hb, pr = np.array(hb), np.array(pr)

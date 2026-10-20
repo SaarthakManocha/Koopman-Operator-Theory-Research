@@ -33,6 +33,15 @@ def one_run(a, policy, rep, outdir):
     rng = random.Random(1000 * rep + 7)
     procs, pids = [], []
     ts = ["taskset", "-c", a.cpus]
+    scx = None
+    if policy.startswith("scx_"):
+        # scx_<none|ewma|koopman>_<margin %>: whole-machine sched_ext scheduler (kit/sched_ext)
+        _, pred, margin = policy.split("_")
+        exe = os.path.join(HERE, "..", "sched_ext", "build", "scx_koopman")
+        if not os.path.exists(exe):
+            exe = os.path.join(HERE, "..", "kit", "sched_ext", "build", "scx_koopman")
+        scx = subprocess.Popen([exe, "-p", pred, "-m", margin, "-t", str(a.secs + 3), "-o", f"{outdir}/scx.txt"])
+        time.sleep(1.5)
     for i in range(a.hogs):
         p = subprocess.Popen(ts + [os.path.join(HERE, "task"), "hog", str(a.secs), f"{outdir}/hog{i}.txt"])
         procs.append(p); pids.append(("hog", p.pid))
@@ -60,7 +69,13 @@ def one_run(a, policy, rep, outdir):
     th = threading.Thread(target=sampler); th.start()
     c0 = ctxt()
     ag = None
-    if policy != "stock":
+    if policy.startswith("bpf_"):
+        # bpf_<ewma|koopman>_<margin>: event-driven C agent with the eBPF burst observer
+        _, pred, c = policy.split("_")
+        ag = subprocess.Popen(ts + [os.path.join(HERE, "bpf", "cagent"), pred, c, f"{outdir}/pids.txt",
+                                    str(a.secs + 0.5), f"{outdir}/agent.txt"])
+        time.sleep(0.3)
+    elif policy != "stock":
         ap = "static" if policy.startswith("oracle") else policy
         ag = subprocess.Popen(ts + [sys.executable, os.path.join(HERE, "agent.py"), ap, f"{outdir}/pids.txt",
                                     str(a.secs), f"{outdir}/agent.json"])
@@ -70,6 +85,8 @@ def one_run(a, policy, rep, outdir):
     if ag:
         ag.wait()
     stop.set(); th.join()
+    if scx:
+        scx.wait()
     json.dump({"policy": policy, "rep": rep, "cpus": a.cpus, "hogs": a.hogs, "reqs": a.reqs, "secs": a.secs,
                "ctxt": c1 - c0, "gt": gt}, open(f"{outdir}/meta.json", "w"))
 
