@@ -31,7 +31,8 @@ recorded in the lab, then rebuilds every table and figure in the report.
         --out data/closedloop/sweep_1cpu
     sudo python3 closedloop/real_closed.py --reps 10 --secs 20 --out data/closedloop/real_1cpu
     python3 closedloop/analyse_real_closed.py data/closedloop/real_1cpu
-    python3 closedloop/plot_sweep.py                            # Fig. 4
+    python3 closedloop/plot_sweep.py                            # Fig. 9 (margin sweep + real programs)
+    python3 src/plots_paper_extra.py                            # Figs. 1, 6, 7 (overview, baselines, spectra)
 
 `kit/sched_ext/` holds the sched_ext policy for the lab (compiles, not yet run). Details: RESULTS_EXTRA.md, sections 5-9.
 
