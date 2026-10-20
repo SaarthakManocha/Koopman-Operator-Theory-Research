@@ -1,6 +1,6 @@
 # Build the eBPF burst observer and the C slice controller.
 # Needs clang, libbpf-dev and bpftool; vmlinux.h is generated from the running kernel.
-BPFTOOL ?= $(shell ls /usr/lib/linux-tools*/bpftool 2>/dev/null | head -1 || echo bpftool)
+BPFTOOL ?= $(firstword $(wildcard /usr/lib/linux-tools/$(shell uname -r)/bpftool /usr/lib/linux-tools/*/bpftool /usr/lib/linux-tools-*/bpftool) bpftool)
 ARCH := $(shell uname -m | sed 's/x86_64/x86/;s/aarch64/arm64/')
 
 all: cagent
