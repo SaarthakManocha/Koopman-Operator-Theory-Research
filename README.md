@@ -1,10 +1,8 @@
 # Predictive CPU Scheduling via Koopman Operator Theory
 
-OS case study, CBIT. Can we predict how long a process will run on the CPU
-next, from how long it ran its last few times? We test EDMD (a
-Koopman-operator method) against simple guesses and against the textbook SJF
-exponential average. The data is a real Linux scheduler trace with 3
-CPU-bound and 3 I/O-bound processes (Trace 3).
+Can we predict how long a process will run on the CPU next, from how long it ran its last few times? 
+We test EDMD (a Koopman-operator method) against simple guesses and against the textbook SJF
+exponential average. The data is a real Linux scheduler trace with 3 CPU-bound and 3 I/O-bound processes (Trace 3).
 
 ## Quick start (VS Code)
 
