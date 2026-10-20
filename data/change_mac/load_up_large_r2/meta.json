@@ -1,0 +1,64 @@
+{
+ "name": "load_up_large_r2",
+ "kind": "load_up",
+ "size": "large",
+ "rep": 2,
+ "ncpu": 4,
+ "t0_mono": 2390.258242471,
+ "planned_change_s": 19.83158002842754,
+ "change_mono": 2410.098851023,
+ "change_s": 19.84060855200005,
+ "jobs": [
+  [
+   "cpu",
+   12,
+   0
+  ],
+  [
+   "cpu",
+   13,
+   0
+  ],
+  [
+   "io",
+   14,
+   0
+  ],
+  [
+   "io",
+   15,
+   0
+  ],
+  [
+   "phased",
+   16,
+   0
+  ],
+  [
+   "cpu_extra",
+   17,
+   0
+  ],
+  [
+   "cpu_extra",
+   18,
+   0
+  ],
+  [
+   "cpu_extra",
+   19,
+   0
+  ],
+  [
+   "cpu_extra",
+   20,
+   0
+  ]
+ ],
+ "kernel": "6.8.0-138-generic",
+ "traced": false,
+ "lost_events": null,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "aarch64"
+}

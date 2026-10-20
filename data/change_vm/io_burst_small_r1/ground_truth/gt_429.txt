@@ -1,0 +1,7 @@
+pid 429
+kind phased
+run_ns 12208931611
+wait_ns 10873417488
+timeslices 8608
+voluntary 3326
+involuntary 5281

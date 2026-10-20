@@ -1,0 +1,7 @@
+pid 1253
+kind cpu
+run_ns 18628545898
+wait_ns 21218869881
+timeslices 6184
+voluntary 0
+involuntary 6183

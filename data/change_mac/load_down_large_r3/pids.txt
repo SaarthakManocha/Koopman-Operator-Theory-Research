@@ -1,0 +1,9 @@
+cpu 23
+cpu 24
+io 25
+io 26
+phased 27
+cpu 28
+cpu 29
+cpu 30
+cpu 31

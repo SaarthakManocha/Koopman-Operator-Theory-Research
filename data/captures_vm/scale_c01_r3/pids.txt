@@ -1,0 +1,8 @@
+cpu 1383
+cpu 1384
+cpu 1385
+io 1386
+io 1387
+io 1388
+phased 1389
+phased 1390

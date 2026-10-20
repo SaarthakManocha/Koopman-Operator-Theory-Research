@@ -1,0 +1,7 @@
+pid 391
+kind phased
+run_ns 11047228084
+wait_ns 13101455540
+timeslices 7470
+voluntary 3121
+involuntary 4348

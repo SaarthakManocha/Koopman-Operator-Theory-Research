@@ -1,0 +1,8 @@
+cpu 1305
+cpu 1306
+cpu 1307
+io 1308
+io 1309
+io 1310
+phased 1311
+phased 1312

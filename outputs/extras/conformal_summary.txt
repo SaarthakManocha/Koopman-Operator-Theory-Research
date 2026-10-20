@@ -1,0 +1,13 @@
+Split conformal, target coverage 90%, 60 processes (60 series)
+  io      EWMA      n= 36 coverage median 0.912 (min 0.60, share >= 0.85: 0.83); interval width factor median 8.26
+  io      log-EDMD  n= 36 coverage median 0.903 (min 0.65, share >= 0.85: 0.75); interval width factor median 5.70
+  phased  EWMA      n= 24 coverage median 0.934 (min 0.87, share >= 0.85: 1.00); interval width factor median 1.17
+  phased  log-EDMD  n= 24 coverage median 0.934 (min 0.89, share >= 0.85: 1.00); interval width factor median 1.29
+  log-EDMD interval narrower than EWMA in 34/60 series; median width ratio 0.837
+
+Cost per call:
+  Python/numpy (this study)    predict next burst             8175.6 ns
+  Python/numpy (this study)    refit on 300 bursts           40871.9 ns
+  Python/numpy (this study)    3x3 operator step only          882.0 ns
+  C, -O2                       predict next burst                5.6 ns
+  C, -O2                       online RLS update                29.0 ns

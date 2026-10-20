@@ -1,0 +1,7 @@
+pid 5042
+kind ffmpeg
+run_ns 13892
+wait_ns 38080
+timeslices 3
+voluntary 1
+involuntary 2

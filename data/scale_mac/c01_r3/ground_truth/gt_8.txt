@@ -1,0 +1,7 @@
+pid 8
+kind cpu
+run_ns 7085831587
+wait_ns 22946573757
+timeslices 2943
+voluntary 0
+involuntary 2942

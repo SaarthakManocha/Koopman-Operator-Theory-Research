@@ -1,0 +1,7 @@
+pid 649
+kind cpu
+run_ns 7070757727
+wait_ns 9616063973
+timeslices 2559
+voluntary 0
+involuntary 2558

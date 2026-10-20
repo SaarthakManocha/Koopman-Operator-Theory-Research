@@ -1,0 +1,59 @@
+{
+ "buffer_kb_per_cpu": 262144,
+ "reader": "post-run read of tracefs 'trace' (no streaming)",
+ "name": "scale_c02_r2",
+ "kernel": "6.18.44-fc-v139",
+ "ncpu": 2,
+ "cpus_allowed": [
+  0,
+  1
+ ],
+ "jobs": {
+  "cpu": 3,
+  "io": 3,
+  "phased": 2
+ },
+ "secs": 30,
+ "cpu_secs": 30,
+ "extra_cpu": null,
+ "t_start_mono": 1617.033083414,
+ "t_end_mono": 1647.640259102,
+ "exit_codes": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "lost_events": 0,
+ "ring_stats": {
+  "cpu0": {
+   "entries": "33643",
+   "overrun": "0",
+   "commit overrun": "0",
+   "bytes": "1900100",
+   "oldest event ts": "1617.044035",
+   "now ts": "1647.754305",
+   "dropped events": "0",
+   "read events": "0"
+  },
+  "cpu1": {
+   "entries": "39188",
+   "overrun": "0",
+   "commit overrun": "0",
+   "bytes": "2153336",
+   "oldest event ts": "1617.033177",
+   "now ts": "1647.754338",
+   "dropped events": "0",
+   "read events": "0"
+  }
+ },
+ "hypervisor": true,
+ "wsl": false,
+ "trace_clock": "mono",
+ "captured_at": "2026-10-20 06:20:45 Asia",
+ "sha256_trace_txt": "1ca28cbef1e2e7ff73bb457af0a5b36af23cb588e805a59e743c5dfff5f72056"
+}

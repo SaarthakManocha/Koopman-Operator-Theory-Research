@@ -1,0 +1,64 @@
+{
+ "name": "load_down_large_r2",
+ "kind": "load_down",
+ "size": "large",
+ "rep": 2,
+ "ncpu": 4,
+ "t0_mono": 2471.564173302,
+ "planned_change_s": 24.554995837265377,
+ "change_mono": 2496.22097448,
+ "change_s": 24.656801178000023,
+ "jobs": [
+  [
+   "cpu",
+   36,
+   0
+  ],
+  [
+   "cpu",
+   37,
+   0
+  ],
+  [
+   "io",
+   38,
+   0
+  ],
+  [
+   "io",
+   39,
+   0
+  ],
+  [
+   "phased",
+   40,
+   0
+  ],
+  [
+   "cpu_extra",
+   41,
+   0
+  ],
+  [
+   "cpu_extra",
+   42,
+   0
+  ],
+  [
+   "cpu_extra",
+   43,
+   0
+  ],
+  [
+   "cpu_extra",
+   44,
+   0
+  ]
+ ],
+ "kernel": "6.8.0-138-generic",
+ "traced": false,
+ "lost_events": null,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "aarch64"
+}

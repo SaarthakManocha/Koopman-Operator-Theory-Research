@@ -1,0 +1,49 @@
+{
+ "name": "load_up_small_r2",
+ "kind": "load_up",
+ "size": "small",
+ "rep": 2,
+ "ncpu": 4,
+ "t0_mono": 2299.667454262,
+ "planned_change_s": 16.234951883945676,
+ "change_mono": 2315.918488561,
+ "change_s": 16.25103429899991,
+ "jobs": [
+  [
+   "cpu",
+   30,
+   0
+  ],
+  [
+   "cpu",
+   31,
+   0
+  ],
+  [
+   "io",
+   32,
+   0
+  ],
+  [
+   "io",
+   33,
+   0
+  ],
+  [
+   "phased",
+   34,
+   0
+  ],
+  [
+   "cpu_extra",
+   35,
+   0
+  ]
+ ],
+ "kernel": "6.8.0-138-generic",
+ "traced": false,
+ "lost_events": null,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "aarch64"
+}

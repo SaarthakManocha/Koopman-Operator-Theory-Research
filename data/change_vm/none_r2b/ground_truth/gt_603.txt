@@ -1,0 +1,7 @@
+pid 603
+kind phased
+run_ns 12129768159
+wait_ns 10722072103
+timeslices 8086
+voluntary 3369
+involuntary 4716

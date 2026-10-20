@@ -1,0 +1,5 @@
+cpu 701
+cpu 702
+io 703
+io 704
+phased 705

@@ -1,0 +1,5 @@
+cpu 12
+cpu 13
+io 14
+io 15
+phased 16

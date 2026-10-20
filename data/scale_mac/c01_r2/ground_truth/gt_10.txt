@@ -1,0 +1,7 @@
+pid 10
+kind cpu
+run_ns 7068674490
+wait_ns 22977099396
+timeslices 2894
+voluntary 0
+involuntary 2893

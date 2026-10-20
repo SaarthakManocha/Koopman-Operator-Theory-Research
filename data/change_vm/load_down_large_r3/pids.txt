@@ -1,0 +1,7 @@
+cpu 644
+cpu 645
+io 646
+io 647
+phased 648
+cpu 649
+cpu 650

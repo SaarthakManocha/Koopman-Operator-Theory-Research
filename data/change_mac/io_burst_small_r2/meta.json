@@ -1,0 +1,54 @@
+{
+ "name": "io_burst_small_r2",
+ "kind": "io_burst",
+ "size": "small",
+ "rep": 2,
+ "ncpu": 4,
+ "t0_mono": 2527.914847329,
+ "planned_change_s": 22.198679654459728,
+ "change_mono": 2550.127054464,
+ "change_s": 22.21220713499997,
+ "jobs": [
+  [
+   "cpu",
+   12,
+   0
+  ],
+  [
+   "cpu",
+   13,
+   0
+  ],
+  [
+   "io",
+   14,
+   0
+  ],
+  [
+   "io",
+   15,
+   0
+  ],
+  [
+   "phased",
+   16,
+   0
+  ],
+  [
+   "io_extra",
+   17,
+   0
+  ],
+  [
+   "io_extra",
+   18,
+   0
+  ]
+ ],
+ "kernel": "6.8.0-138-generic",
+ "traced": false,
+ "lost_events": null,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "aarch64"
+}

@@ -1,0 +1,7 @@
+pid 24
+kind phased
+run_ns 6319536426
+wait_ns 12679060825
+timeslices 4178
+voluntary 2183
+involuntary 1994

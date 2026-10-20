@@ -1,0 +1,7 @@
+pid 1307
+kind cpu
+run_ns 14864388290
+wait_ns 15005466297
+timeslices 5464
+voluntary 0
+involuntary 5463

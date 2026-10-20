@@ -1,0 +1,7 @@
+pid 571
+kind cpu
+run_ns 31405102734
+wait_ns 8278313603
+timeslices 8189
+voluntary 0
+involuntary 8188

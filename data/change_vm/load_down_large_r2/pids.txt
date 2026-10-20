@@ -1,0 +1,7 @@
+cpu 529
+cpu 530
+io 531
+io 532
+phased 533
+cpu 534
+cpu 535

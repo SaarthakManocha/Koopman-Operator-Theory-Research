@@ -1,0 +1,7 @@
+pid 702
+kind cpu
+run_ns 31857963700
+wait_ns 7804920506
+timeslices 8349
+voluntary 0
+involuntary 8348

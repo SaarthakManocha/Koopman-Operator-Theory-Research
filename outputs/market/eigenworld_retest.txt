@@ -1,0 +1,7 @@
+(main run: bandwidth sample seed 0)
+EIGENWORLD pipelines on 1992-03-23 .. 2026-10-05: 415 windows, 51 end in the 60 trading days before one of 22 events
+spectral_entropy : mean before events 2.1638, other windows 2.1412, difference +0.0226, permutation p = 0.073  (claim: lower before crashes)
+stability_margin : mean before events -0.0083, other windows -0.0341, difference +0.0258, permutation p = 0.850  (claim: smaller before crashes)
+Global entropy minimum: 1.9835 on 2008-07-23
+Windows in the lowest 10% of entropy: 42; of these, 2 are pre-event (expected by chance 5.2)
+Around Lehman (EIGENWORLD's original case): 2008-06-23 2.032, 2008-07-23 1.983, 2008-08-21 1.986, 2008-09-22 1.997, 2008-10-21 2.166

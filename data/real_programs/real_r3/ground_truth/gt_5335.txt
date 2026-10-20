@@ -1,0 +1,7 @@
+pid 5335
+kind node
+run_ns 23964554872
+wait_ns 16865355971
+timeslices 21826
+voluntary 4904
+involuntary 16922

@@ -1,0 +1,7 @@
+pid 504
+kind cpu
+run_ns 8451588906
+wait_ns 11674617989
+timeslices 3012
+voluntary 0
+involuntary 3011

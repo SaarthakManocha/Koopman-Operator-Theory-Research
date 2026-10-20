@@ -1,0 +1,6 @@
+cpu 484
+cpu 485
+io 486
+io 487
+phased 488
+cpu 491

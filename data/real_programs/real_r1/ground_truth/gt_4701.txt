@@ -1,0 +1,7 @@
+pid 4701
+kind sqlite
+run_ns 11934137513
+wait_ns 13202532299
+timeslices 18713
+voluntary 14526
+involuntary 4187

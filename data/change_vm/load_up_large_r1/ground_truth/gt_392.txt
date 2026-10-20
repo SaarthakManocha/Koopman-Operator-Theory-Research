@@ -1,0 +1,7 @@
+pid 392
+kind cpu
+run_ns 7756907474
+wait_ns 11485222362
+timeslices 2736
+voluntary 0
+involuntary 2735

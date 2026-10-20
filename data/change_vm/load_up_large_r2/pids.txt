@@ -1,0 +1,7 @@
+cpu 498
+cpu 499
+io 500
+io 501
+phased 502
+cpu 503
+cpu 504

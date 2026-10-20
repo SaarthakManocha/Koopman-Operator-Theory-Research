@@ -1,0 +1,7 @@
+cpu 617
+cpu 618
+io 619
+io 620
+phased 621
+cpu 628
+cpu 629

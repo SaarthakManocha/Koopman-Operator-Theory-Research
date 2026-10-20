@@ -1,0 +1,44 @@
+{
+ "name": "none_r1a",
+ "kind": "none",
+ "size": "-",
+ "rep": 1,
+ "ncpu": 2,
+ "t0_mono": 938.413176735,
+ "planned_change_s": 23.084859456761293,
+ "change_mono": null,
+ "change_s": null,
+ "jobs": [
+  [
+   "cpu",
+   463,
+   0
+  ],
+  [
+   "cpu",
+   464,
+   0
+  ],
+  [
+   "io",
+   465,
+   0
+  ],
+  [
+   "io",
+   466,
+   0
+  ],
+  [
+   "phased",
+   467,
+   0
+  ]
+ ],
+ "kernel": "6.18.44-fc-v139",
+ "traced": true,
+ "lost_events": 0,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "x86_64"
+}

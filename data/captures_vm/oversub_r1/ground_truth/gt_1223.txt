@@ -1,0 +1,7 @@
+pid 1223
+kind cpu
+run_ns 11669554172
+wait_ns 18262280978
+timeslices 4625
+voluntary 0
+involuntary 4624

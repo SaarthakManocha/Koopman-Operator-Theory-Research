@@ -1,0 +1,45 @@
+OK    tracefs mounted, sched tracepoints present
+INFO  kernel 6.18.44-fc-v139, 2 CPUs, native/VM
+INFO  running under a hypervisor: True
+INFO  cpufreq available: False
+READY TO CAPTURE
+SELFTEST  a sleeping task was switched out 201 times and in 50 times -> INCOMPLETE: 151 idle-exit switches missing; use only runs that keep every core busy
+Plan: 12 captures, about 10 minutes
+
+=== scale_c01_r1: cpus=[0]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=0.5 MB
+
+=== scale_c02_r1: cpus=[0, 1]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=0.6 MB
+
+=== oversub_r1: cpus=all  cpu=4 io=2 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=0.6 MB
+
+=== regime_r1: cpus=all  cpu=2 io=3 phased=2  40s ===
+    OK: lost events=0, ground-truth files=11/11, exit codes={0}, trace.gz=0.8 MB
+
+=== scale_c01_r2: cpus=[0]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=0.5 MB
+
+=== scale_c02_r2: cpus=[0, 1]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=0.6 MB
+
+=== oversub_r2: cpus=all  cpu=4 io=2 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=0.5 MB
+
+=== regime_r2: cpus=all  cpu=2 io=3 phased=2  40s ===
+    OK: lost events=0, ground-truth files=11/11, exit codes={0}, trace.gz=0.8 MB
+
+=== scale_c01_r3: cpus=[0]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=0.5 MB
+
+=== scale_c02_r3: cpus=[0, 1]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=0.6 MB
+
+=== oversub_r3: cpus=all  cpu=4 io=2 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=0.6 MB
+
+=== regime_r3: cpus=all  cpu=2 io=3 phased=2  40s ===
+    OK: lost events=0, ground-truth files=11/11, exit codes={0}, trace.gz=0.8 MB
+
+Finished: 12/12 OK

@@ -1,0 +1,8 @@
+cpu 1193
+cpu 1194
+cpu 1195
+io 1196
+io 1197
+io 1198
+phased 1199
+phased 1200

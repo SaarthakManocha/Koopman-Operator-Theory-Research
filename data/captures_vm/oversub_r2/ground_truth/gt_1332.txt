@@ -1,0 +1,7 @@
+pid 1332
+kind io
+run_ns 129612240
+wait_ns 425668628
+timeslices 1247
+voluntary 1171
+involuntary 75

@@ -1,0 +1,7 @@
+pid 1362
+kind phased
+run_ns 9247941302
+wait_ns 16322213630
+timeslices 7132
+voluntary 2850
+involuntary 4281

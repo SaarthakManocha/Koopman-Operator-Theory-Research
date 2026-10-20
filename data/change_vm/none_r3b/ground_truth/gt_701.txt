@@ -1,0 +1,7 @@
+pid 701
+kind cpu
+run_ns 33604770272
+wait_ns 6074534973
+timeslices 7118
+voluntary 0
+involuntary 7117

@@ -1,0 +1,7 @@
+pid 387
+kind cpu
+run_ns 24247124277
+wait_ns 15553450259
+timeslices 7359
+voluntary 0
+involuntary 7358

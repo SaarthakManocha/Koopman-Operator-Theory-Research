@@ -1,0 +1,7 @@
+pid 558
+kind cpu
+run_ns 32567980703
+wait_ns 7088267929
+timeslices 13696
+voluntary 0
+involuntary 13695

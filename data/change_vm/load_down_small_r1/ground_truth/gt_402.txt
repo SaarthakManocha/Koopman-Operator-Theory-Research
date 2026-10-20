@@ -1,0 +1,7 @@
+pid 402
+kind phased
+run_ns 12016320637
+wait_ns 11002665398
+timeslices 8062
+voluntary 3327
+involuntary 4734

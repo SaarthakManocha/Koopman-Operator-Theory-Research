@@ -1,0 +1,7 @@
+pid 485
+kind cpu
+run_ns 25851103982
+wait_ns 13927154817
+timeslices 7186
+voluntary 0
+involuntary 7185

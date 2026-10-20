@@ -1,0 +1,84 @@
+{
+ "name": "io_burst_large_r1",
+ "kind": "io_burst",
+ "size": "large",
+ "rep": 1,
+ "ncpu": 4,
+ "t0_mono": 2146.40558373,
+ "planned_change_s": 15.646364638177726,
+ "change_mono": 2162.067028571,
+ "change_s": 15.661444840999593,
+ "jobs": [
+  [
+   "cpu",
+   40,
+   0
+  ],
+  [
+   "cpu",
+   41,
+   0
+  ],
+  [
+   "io",
+   42,
+   0
+  ],
+  [
+   "io",
+   43,
+   0
+  ],
+  [
+   "phased",
+   44,
+   0
+  ],
+  [
+   "io_extra",
+   45,
+   0
+  ],
+  [
+   "io_extra",
+   46,
+   0
+  ],
+  [
+   "io_extra",
+   47,
+   0
+  ],
+  [
+   "io_extra",
+   48,
+   0
+  ],
+  [
+   "io_extra",
+   49,
+   0
+  ],
+  [
+   "io_extra",
+   50,
+   0
+  ],
+  [
+   "io_extra",
+   51,
+   0
+  ],
+  [
+   "io_extra",
+   52,
+   0
+  ]
+ ],
+ "kernel": "6.8.0-138-generic",
+ "traced": false,
+ "lost_events": null,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "aarch64"
+}

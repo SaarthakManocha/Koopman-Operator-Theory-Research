@@ -1,0 +1,7 @@
+pid 4699
+kind client
+run_ns 1260608683
+wait_ns 3284862705
+timeslices 26332
+voluntary 25765
+involuntary 567

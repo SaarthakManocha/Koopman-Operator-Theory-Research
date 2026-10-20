@@ -1,0 +1,2 @@
+d43154c9c5e10d4639e31b16019cfe41f917ea3771648163a77ea7c020f2e81b  /home/claude/koopman-cpu-scheduling/data/market/sp500_1990_2026.csv
+68a2fb20712aef2f0030b24ec99b0ec7774e6f30e48872ce804e61b3a9ad4c15  /home/claude/koopman-cpu-scheduling/data/market/vix_1990_2026.csv

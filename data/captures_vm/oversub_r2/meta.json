@@ -1,0 +1,59 @@
+{
+ "buffer_kb_per_cpu": 262144,
+ "reader": "post-run read of tracefs 'trace' (no streaming)",
+ "name": "oversub_r2",
+ "kernel": "6.18.44-fc-v139",
+ "ncpu": 2,
+ "cpus_allowed": [
+  0,
+  1
+ ],
+ "jobs": {
+  "cpu": 4,
+  "io": 2,
+  "phased": 2
+ },
+ "secs": 30,
+ "cpu_secs": 30,
+ "extra_cpu": null,
+ "t_start_mono": 1647.957751238,
+ "t_end_mono": 1678.565102644,
+ "exit_codes": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "lost_events": 0,
+ "ring_stats": {
+  "cpu0": {
+   "entries": "28555",
+   "overrun": "0",
+   "commit overrun": "0",
+   "bytes": "1656540",
+   "oldest event ts": "1647.957893",
+   "now ts": "1678.640433",
+   "dropped events": "0",
+   "read events": "0"
+  },
+  "cpu1": {
+   "entries": "35086",
+   "overrun": "0",
+   "commit overrun": "0",
+   "bytes": "1947376",
+   "oldest event ts": "1647.957891",
+   "now ts": "1678.640465",
+   "dropped events": "0",
+   "read events": "0"
+  }
+ },
+ "hypervisor": true,
+ "wsl": false,
+ "trace_clock": "mono",
+ "captured_at": "2026-10-20 06:21:16 Asia",
+ "sha256_trace_txt": "c479393b950161cf69f91a6e698dbce3854a7a1bdb601967b78ecadbd9c92327"
+}

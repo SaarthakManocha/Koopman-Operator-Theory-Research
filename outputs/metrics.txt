@@ -1,0 +1,293 @@
+Bursts file: data/processed/bursts_trace3.csv
+Loaded phase ends (first CPU-bound exit): t=966.850 s; idle phase starts (last exit): t=971.626 s
+
+=== 1. Main split (last 20% per process) ===
+
+PID 9562 (cpu), train 302, test 76, EWMA tuned alpha=0.15
+  method                           MAE ms    RMSE ms  MAE/mean [95% CI]       MAE/EWMA0.5 [95% CI]
+  Mean baseline                   107.133    145.166  1.000 [1.000,1.000]   1.160 [0.894,1.849]
+  Median baseline                  90.273    154.068  0.843 [0.567,1.013]   0.978 [0.829,1.135]
+  Last value                      109.598    169.984  1.023 [0.591,1.359]   1.187 [1.038,1.264]
+  EWMA a=0.5 (textbook SJF)        92.349    136.459  0.862 [0.541,1.119]   1.000 [1.000,1.000]
+  EWMA tuned                       96.997    127.938  0.905 [0.666,1.160]   1.050 [0.940,1.359]
+  EDMD one-step                    91.397    128.706  0.853 [0.694,0.984]   0.990 [0.854,1.292]
+  EDMD recursive                  107.021    144.874  0.999 [0.998,1.001]   1.159 [0.893,1.849]
+  Poly EDMD one-step               86.184    126.437  0.804 [0.601,1.009]   0.933 [0.782,1.178]
+  Log EDMD one-step                85.368    146.818  0.797 [0.472,0.977]   0.924 [0.755,1.012]
+  Gradient boosting                99.791    140.936  0.931 [0.680,1.203]   1.081 [0.861,1.526]
+
+PID 9563 (cpu), train 190, test 47, EWMA tuned alpha=0.95
+  method                           MAE ms    RMSE ms  MAE/mean [95% CI]       MAE/EWMA0.5 [95% CI]
+  Mean baseline                   233.361    409.870  1.000 [1.000,1.000]   1.042 [0.761,3.499]
+  Median baseline                 161.114    435.511  0.690 [0.266,0.944]   0.720 [0.644,0.940]
+  Last value                      201.631    484.018  0.864 [0.302,1.178]   0.900 [0.818,1.089]
+  EWMA a=0.5 (textbook SJF)       223.921    436.690  0.960 [0.286,1.314]   1.000 [1.000,1.000]
+  EWMA tuned                      198.706    476.849  0.851 [0.301,1.158]   0.887 [0.811,1.079]
+  EDMD one-step                   213.826    430.609  0.916 [0.503,1.148]   0.955 [0.835,1.786]
+  EDMD recursive                  232.078    409.565  0.995 [0.994,1.008]   1.036 [0.761,3.512]
+  Poly EDMD one-step              248.437    503.194  1.065 [0.444,1.434]   1.109 [1.039,1.542]
+  Log EDMD one-step               162.796    421.722  0.698 [0.289,0.939]   0.727 [0.653,0.984]
+  Gradient boosting               227.625    470.749  0.975 [0.279,1.313]   1.017 [0.930,1.163]
+
+PID 9564 (cpu), train 124, test 31, EWMA tuned alpha=0.05
+  method                           MAE ms    RMSE ms  MAE/mean [95% CI]       MAE/EWMA0.5 [95% CI]
+  Mean baseline                   230.701    272.713  1.000 [1.000,1.000]   1.147 [1.040,1.328]
+  Median baseline                 136.855    273.864  0.593 [0.503,0.696]   0.681 [0.589,0.787]
+  Last value                      240.938    381.577  1.044 [0.922,1.198]   1.198 [1.139,1.343]
+  EWMA a=0.5 (textbook SJF)       201.048    306.691  0.871 [0.753,0.962]   1.000 [1.000,1.000]
+  EWMA tuned                      168.848    254.906  0.732 [0.686,0.800]   0.840 [0.798,0.931]
+  EDMD one-step                   257.204    288.850  1.115 [1.068,1.231]   1.279 [1.122,1.624]
+  EDMD recursive                  232.448    273.340  1.008 [0.995,1.011]   1.156 [1.041,1.328]
+  Poly EDMD one-step              282.241    320.442  1.223 [1.153,1.386]   1.404 [1.229,1.784]
+  Log EDMD one-step               142.299    245.203  0.617 [0.528,0.695]   0.708 [0.594,0.855]
+  Gradient boosting               180.790    227.900  0.784 [0.625,0.876]   0.899 [0.709,1.059]
+
+PID 9565 (io), train 1500, test 375, EWMA tuned alpha=0.65
+  method                           MAE us    RMSE us  MAE/mean [95% CI]       MAE/EWMA0.5 [95% CI]
+  Mean baseline                   188.225    224.821  1.000 [1.000,1.000]   2.426 [2.047,3.223]
+  Median baseline                 206.069    243.202  1.095 [1.088,1.103]   2.656 [2.240,3.536]
+  Last value                       91.059    157.463  0.484 [0.361,0.586]   1.174 [1.126,1.238]
+  EWMA a=0.5 (textbook SJF)        77.584    142.862  0.412 [0.310,0.489]   1.000 [1.000,1.000]
+  EWMA tuned                       80.574    145.722  0.428 [0.322,0.511]   1.039 [1.023,1.057]
+  EDMD one-step                    86.432    145.911  0.459 [0.368,0.525]   1.114 [1.059,1.199]
+  EDMD recursive                  187.786    224.571  0.998 [0.997,1.000]   2.420 [2.044,3.216]
+  Poly EDMD one-step               80.057    139.703  0.425 [0.343,0.480]   1.032 [0.971,1.117]
+  Log EDMD one-step               137.950    178.319  0.733 [0.679,0.772]   1.778 [1.571,2.195]
+  Gradient boosting                86.906    143.327  0.462 [0.382,0.516]   1.120 [1.017,1.276]
+
+PID 9566 (io), train 1219, test 305, EWMA tuned alpha=0.9
+  method                           MAE us    RMSE us  MAE/mean [95% CI]       MAE/EWMA0.5 [95% CI]
+  Mean baseline                   169.569    173.456  1.000 [1.000,1.000]   5.764 [4.726,7.468]
+  Median baseline                 212.800    216.646  1.255 [1.247,1.264]   7.233 [5.939,9.354]
+  Last value                       35.298     55.151  0.208 [0.165,0.254]   1.200 [1.153,1.279]
+  EWMA a=0.5 (textbook SJF)        29.420     46.292  0.174 [0.134,0.212]   1.000 [1.000,1.000]
+  EWMA tuned                       33.866     52.874  0.200 [0.157,0.244]   1.151 [1.113,1.212]
+  EDMD one-step                    31.360     48.821  0.185 [0.141,0.228]   1.066 [1.029,1.096]
+  EDMD recursive                  148.914    157.626  0.878 [0.816,0.949]   5.062 [4.119,6.776]
+  Poly EDMD one-step               29.771     44.221  0.176 [0.143,0.207]   1.012 [0.962,1.084]
+  Log EDMD one-step                35.316     51.729  0.208 [0.162,0.255]   1.200 [1.152,1.259]
+  Gradient boosting                29.322     47.509  0.173 [0.141,0.201]   0.997 [0.909,1.117]
+
+PID 9567 (io), train 1562, test 391, EWMA tuned alpha=0.6
+  method                           MAE us    RMSE us  MAE/mean [95% CI]       MAE/EWMA0.5 [95% CI]
+  Mean baseline                   216.132    227.735  1.000 [1.000,1.000]   3.619 [2.908,4.617]
+  Median baseline                 232.463    245.054  1.076 [1.071,1.079]   3.892 [3.121,4.974]
+  Last value                       72.767    107.399  0.337 [0.261,0.423]   1.218 [1.167,1.268]
+  EWMA a=0.5 (textbook SJF)        59.728     87.464  0.276 [0.217,0.344]   1.000 [1.000,1.000]
+  EWMA tuned                       61.707     90.292  0.286 [0.223,0.355]   1.033 [1.023,1.044]
+  EDMD one-step                    73.325     93.516  0.339 [0.288,0.399]   1.228 [1.136,1.352]
+  EDMD recursive                  211.909    224.106  0.980 [0.966,1.000]   3.548 [2.887,4.560]
+  Poly EDMD one-step               69.596     89.213  0.322 [0.275,0.375]   1.165 [1.085,1.279]
+  Log EDMD one-step               146.075    156.416  0.676 [0.648,0.709]   2.446 [2.045,3.008]
+  Gradient boosting                73.136     97.078  0.338 [0.296,0.387]   1.224 [1.089,1.413]
+
+=== 2. Rolling origins: median MAE ratio vs mean baseline (and vs EWMA 0.5) over 5 splits ===
+  [cpu]
+    Mean baseline                vs mean 1.000 (beats it 0/15)   vs EWMA 1.318 (beats it 3/15)
+    Median baseline              vs mean 0.655 (beats it 13/15)   vs EWMA 0.908 (beats it 10/15)
+    Last value                   vs mean 0.839 (beats it 11/15)   vs EWMA 1.172 (beats it 5/15)
+    EWMA a=0.5 (textbook SJF)    vs mean 0.759 (beats it 12/15)   vs EWMA 1.000 (beats it 0/15)
+    EWMA tuned                   vs mean 0.717 (beats it 13/15)   vs EWMA 0.970 (beats it 8/15)
+    EDMD one-step                vs mean 0.913 (beats it 8/15)   vs EWMA 1.308 (beats it 3/15)
+    EDMD recursive               vs mean 0.980 (beats it 11/15)   vs EWMA 1.336 (beats it 3/15)
+    Poly EDMD one-step           vs mean 1.051 (beats it 7/15)   vs EWMA 1.595 (beats it 3/15)
+    Log EDMD one-step            vs mean 0.710 (beats it 14/15)   vs EWMA 0.961 (beats it 9/15)
+    Gradient boosting            vs mean 0.832 (beats it 11/15)   vs EWMA 1.158 (beats it 3/15)
+  [io]
+    Mean baseline                vs mean 1.000 (beats it 0/15)   vs EWMA 2.515 (beats it 2/15)
+    Median baseline              vs mean 1.071 (beats it 4/15)   vs EWMA 2.538 (beats it 2/15)
+    Last value                   vs mean 0.478 (beats it 13/15)   vs EWMA 1.196 (beats it 0/15)
+    EWMA a=0.5 (textbook SJF)    vs mean 0.398 (beats it 13/15)   vs EWMA 1.000 (beats it 0/15)
+    EWMA tuned                   vs mean 0.418 (beats it 13/15)   vs EWMA 1.087 (beats it 0/15)
+    EDMD one-step                vs mean 0.498 (beats it 14/15)   vs EWMA 1.078 (beats it 2/15)
+    EDMD recursive               vs mean 0.990 (beats it 13/15)   vs EWMA 2.503 (beats it 2/15)
+    Poly EDMD one-step           vs mean 0.469 (beats it 14/15)   vs EWMA 1.027 (beats it 4/15)
+    Log EDMD one-step            vs mean 0.711 (beats it 13/15)   vs EWMA 1.540 (beats it 0/15)
+    Gradient boosting            vs mean 0.508 (beats it 14/15)   vs EWMA 1.059 (beats it 5/15)
+
+=== 3. I/O phase analysis: MAE ratio vs mean baseline [95% CI] ===
+  PID 9565 loaded n=1107 median burst 92 us
+    Mean baseline                MAE    28.49 us  ratio 1.000 [1.000,1.000]
+    Median baseline              MAE    28.47 us  ratio 0.999 [0.995,1.005]
+    Last value                   MAE    42.13 us  ratio 1.479 [1.354,1.641]
+    EWMA a=0.5 (textbook SJF)    MAE    33.47 us  ratio 1.175 [1.091,1.270]
+    EWMA tuned                   MAE    39.78 us  ratio 1.396 [1.283,1.541]
+    EDMD one-step                MAE    29.60 us  ratio 1.039 [0.984,1.111]
+    EDMD recursive               MAE    28.59 us  ratio 1.003 [1.000,1.008]
+    Poly EDMD one-step           MAE    30.32 us  ratio 1.064 [0.984,1.158]
+    Log EDMD one-step            MAE    35.54 us  ratio 1.248 [1.132,1.346]
+    Gradient boosting            MAE    28.37 us  ratio 0.996 [0.894,1.100]
+  PID 9565 idle   n=664 median burst 320 us
+    Mean baseline                MAE    99.51 us  ratio 1.000 [1.000,1.000]
+    Median baseline              MAE    94.48 us  ratio 0.949 [0.796,1.100]
+    Last value                   MAE   110.82 us  ratio 1.114 [0.926,1.338]
+    EWMA a=0.5 (textbook SJF)    MAE    95.69 us  ratio 0.962 [0.793,1.094]
+    EWMA tuned                   MAE    94.22 us  ratio 0.947 [0.776,1.068]
+    EDMD one-step                MAE    93.64 us  ratio 0.941 [0.797,1.038]
+    EDMD recursive               MAE   101.09 us  ratio 1.016 [1.000,1.036]
+    Poly EDMD one-step           MAE    97.47 us  ratio 0.979 [0.837,1.077]
+    Log EDMD one-step            MAE   108.72 us  ratio 1.093 [0.977,1.199]
+    Gradient boosting            MAE    97.29 us  ratio 0.978 [0.821,1.134]
+  PID 9566 loaded n=858 median burst 113 us
+    Mean baseline                MAE     6.13 us  ratio 1.000 [1.000,1.000]
+    Median baseline              MAE    18.47 us  ratio 3.012 [2.703,3.535]
+    Last value                   MAE     6.95 us  ratio 1.133 [0.977,1.273]
+    EWMA a=0.5 (textbook SJF)    MAE     5.67 us  ratio 0.924 [0.796,1.043]
+    EWMA tuned                   MAE     6.79 us  ratio 1.108 [0.959,1.247]
+    EDMD one-step                MAE     5.59 us  ratio 0.912 [0.796,1.032]
+    EDMD recursive               MAE     6.09 us  ratio 0.993 [0.991,1.000]
+    Poly EDMD one-step           MAE     5.83 us  ratio 0.950 [0.822,1.090]
+    Log EDMD one-step            MAE    10.20 us  ratio 1.664 [1.574,1.832]
+    Gradient boosting            MAE     6.34 us  ratio 1.034 [0.874,1.192]
+  PID 9566 idle   n=570 median burst 340 us
+    Mean baseline                MAE    30.71 us  ratio 1.000 [1.000,1.000]
+    Median baseline              MAE    30.21 us  ratio 0.984 [0.879,1.058]
+    Last value                   MAE    43.27 us  ratio 1.409 [1.240,1.602]
+    EWMA a=0.5 (textbook SJF)    MAE    35.23 us  ratio 1.147 [0.993,1.269]
+    EWMA tuned                   MAE    30.43 us  ratio 0.991 [0.867,1.099]
+    EDMD one-step                MAE    30.08 us  ratio 0.980 [0.927,1.022]
+    EDMD recursive               MAE    30.66 us  ratio 0.998 [0.998,1.000]
+    Poly EDMD one-step           MAE    28.93 us  ratio 0.942 [0.876,0.991]
+    Log EDMD one-step            MAE    31.82 us  ratio 1.036 [0.976,1.112]
+    Gradient boosting            MAE    32.48 us  ratio 1.058 [0.911,1.228]
+  PID 9567 loaded n=1203 median burst 85 us
+    Mean baseline                MAE    34.68 us  ratio 1.000 [1.000,1.000]
+    Median baseline              MAE    33.36 us  ratio 0.962 [0.948,0.975]
+    Last value                   MAE    43.44 us  ratio 1.252 [1.083,1.382]
+    EWMA a=0.5 (textbook SJF)    MAE    36.07 us  ratio 1.040 [0.929,1.130]
+    EWMA tuned                   MAE    39.55 us  ratio 1.140 [1.004,1.250]
+    EDMD one-step                MAE    34.14 us  ratio 0.984 [0.918,1.048]
+    EDMD recursive               MAE    34.64 us  ratio 0.999 [0.999,1.002]
+    Poly EDMD one-step           MAE    34.62 us  ratio 0.998 [0.913,1.067]
+    Log EDMD one-step            MAE    40.92 us  ratio 1.180 [1.108,1.260]
+    Gradient boosting            MAE    29.85 us  ratio 0.861 [0.774,0.926]
+  PID 9567 idle   n=635 median burst 337 us
+    Mean baseline                MAE    70.27 us  ratio 1.000 [1.000,1.000]
+    Median baseline              MAE    54.39 us  ratio 0.774 [0.656,0.870]
+    Last value                   MAE    79.86 us  ratio 1.136 [0.942,1.316]
+    EWMA a=0.5 (textbook SJF)    MAE    65.09 us  ratio 0.926 [0.770,1.029]
+    EWMA tuned                   MAE    60.83 us  ratio 0.866 [0.714,0.956]
+    EDMD one-step                MAE    64.40 us  ratio 0.917 [0.800,0.987]
+    EDMD recursive               MAE    71.09 us  ratio 1.012 [1.000,1.016]
+    Poly EDMD one-step           MAE    68.60 us  ratio 0.976 [0.844,1.080]
+    Log EDMD one-step            MAE    85.65 us  ratio 1.219 [1.139,1.282]
+    Gradient boosting            MAE    66.80 us  ratio 0.951 [0.813,1.065]
+
+=== 4. Lag correlations ===
+ pid kind      segment    n  lag  pearson_raw  spearman_rank
+9562  cpu  whole trace  378    1        0.243          0.368
+9562  cpu  whole trace  378    2        0.358          0.432
+9562  cpu  whole trace  378    3        0.232          0.413
+9563  cpu  whole trace  237    1        0.632          0.412
+9563  cpu  whole trace  237    2        0.330          0.247
+9563  cpu  whole trace  237    3        0.094          0.321
+9564  cpu  whole trace  155    1       -0.053          0.041
+9564  cpu  whole trace  155    2       -0.232         -0.174
+9564  cpu  whole trace  155    3       -0.008         -0.019
+9565   io  whole trace 1875    1        0.335          0.567
+9565   io  whole trace 1875    2        0.320          0.611
+9565   io  whole trace 1875    3        0.316          0.551
+9565   io loaded phase 1107    1        0.075          0.417
+9565   io loaded phase 1107    2       -0.005          0.355
+9565   io loaded phase 1107    3        0.070          0.367
+9565   io   idle phase  664    1        0.291          0.451
+9565   io   idle phase  664    2        0.293          0.353
+9565   io   idle phase  664    3        0.194          0.252
+9566   io  whole trace 1524    1        0.373          0.833
+9566   io  whole trace 1524    2        0.372          0.832
+9566   io  whole trace 1524    3        0.404          0.831
+9566   io loaded phase  858    1       -0.212          0.579
+9566   io loaded phase  858    2       -0.192          0.566
+9566   io loaded phase  858    3        0.167          0.584
+9566   io   idle phase  570    1        0.188          0.216
+9566   io   idle phase  570    2        0.082          0.259
+9566   io   idle phase  570    3        0.049          0.151
+9567   io  whole trace 1953    1        0.413          0.646
+9567   io  whole trace 1953    2        0.420          0.671
+9567   io  whole trace 1953    3        0.395          0.653
+9567   io loaded phase 1203    1        0.058          0.379
+9567   io loaded phase 1203    2        0.073          0.415
+9567   io loaded phase 1203    3        0.004          0.400
+9567   io   idle phase  635    1        0.259          0.344
+9567   io   idle phase  635    2        0.287          0.282
+9567   io   idle phase  635    3        0.213          0.219
+
+=== 5. Koopman eigenvalues (raw-lag and log-lag EDMD, main split) ===
+ pid kind model   real   imag   abs
+9562  cpu   raw  0.739  0.000 0.739
+9562  cpu   raw -0.307  0.256 0.400
+9562  cpu   raw -0.307 -0.256 0.400
+9562  cpu   log  0.813  0.000 0.813
+9562  cpu   log -0.396  0.504 0.641
+9562  cpu   log -0.396 -0.504 0.641
+9563  cpu   raw  0.550  0.343 0.648
+9563  cpu   raw  0.550 -0.343 0.648
+9563  cpu   raw -0.330  0.000 0.330
+9563  cpu   log  0.724  0.000 0.724
+9563  cpu   log -0.194  0.450 0.490
+9563  cpu   log -0.194 -0.450 0.490
+9564  cpu   raw  0.056  0.539 0.542
+9564  cpu   raw  0.056 -0.539 0.542
+9564  cpu   raw -0.209  0.000 0.209
+9564  cpu   log -0.040  0.566 0.567
+9564  cpu   log -0.040 -0.566 0.567
+9564  cpu   log  0.111  0.000 0.111
+9565   io   raw  0.887  0.000 0.887
+9565   io   raw -0.483  0.000 0.483
+9565   io   raw -0.032  0.000 0.032
+9565   io   log  0.830  0.000 0.830
+9565   io   log -0.318  0.382 0.497
+9565   io   log -0.318 -0.382 0.497
+9566   io   raw  0.974  0.000 0.974
+9566   io   raw -0.388  0.000 0.388
+9566   io   raw -0.058  0.000 0.058
+9566   io   log  0.972  0.000 0.972
+9566   io   log -0.294  0.492 0.573
+9566   io   log -0.294 -0.492 0.573
+9567   io   raw  0.877  0.000 0.877
+9567   io   raw -0.486  0.000 0.486
+9567   io   raw -0.026  0.000 0.026
+9567   io   log  0.839  0.000 0.839
+9567   io   log -0.369  0.372 0.524
+9567   io   log -0.369 -0.372 0.524
+
+=== 6. SJF simulation: total waiting time relative to oracle SJF (1.00 = perfect) ===
+  mixed (3 CPU + 3 I/O) (31 rounds)
+    Mean baseline                avg wait    80.944 ms   x oracle 2.734 [2.039,3.850]
+    Median baseline              avg wait    70.377 ms   x oracle 2.377 [1.565,3.427]
+    Last value                   avg wait    55.600 ms   x oracle 1.878 [1.486,2.352]
+    EWMA a=0.5 (textbook SJF)    avg wait    51.160 ms   x oracle 1.728 [1.327,2.295]
+    EWMA tuned                   avg wait    44.620 ms   x oracle 1.507 [1.185,1.974]
+    EDMD one-step                avg wait    54.893 ms   x oracle 1.854 [1.433,2.530]
+    EDMD recursive               avg wait    78.054 ms   x oracle 2.637 [1.986,3.694]
+    Poly EDMD one-step           avg wait    52.677 ms   x oracle 1.779 [1.362,2.437]
+    Log EDMD one-step            avg wait    49.943 ms   x oracle 1.687 [1.319,2.244]
+    Gradient boosting            avg wait    56.768 ms   x oracle 1.918 [1.436,2.581]
+    FCFS (PID order)             avg wait   323.763 ms   x oracle 10.937 [9.026,13.700]
+    Oracle SJF                   avg wait    29.603 ms   x oracle 1.000 [1.000,1.000]
+  CPU-bound only (31 rounds)
+    Mean baseline                avg wait   160.593 ms   x oracle 2.770 [2.057,3.930]
+    Median baseline              avg wait   139.457 ms   x oracle 2.405 [1.576,3.485]
+    Last value                   avg wait   107.130 ms   x oracle 1.848 [1.446,2.329]
+    EWMA a=0.5 (textbook SJF)    avg wait   101.049 ms   x oracle 1.743 [1.333,2.324]
+    EWMA tuned                   avg wait    87.971 ms   x oracle 1.517 [1.187,1.996]
+    EDMD one-step                avg wait   105.428 ms   x oracle 1.818 [1.395,2.505]
+    EDMD recursive               avg wait   154.826 ms   x oracle 2.670 [1.999,3.784]
+    Poly EDMD one-step           avg wait   104.083 ms   x oracle 1.795 [1.367,2.477]
+    Log EDMD one-step            avg wait    98.603 ms   x oracle 1.701 [1.325,2.272]
+    Gradient boosting            avg wait    92.952 ms   x oracle 1.603 [1.318,1.947]
+    FCFS (PID order)             avg wait   160.593 ms   x oracle 2.770 [2.057,3.930]
+    Oracle SJF                   avg wait    57.984 ms   x oracle 1.000 [1.000,1.000]
+  I/O-bound only (305 rounds)
+    Mean baseline                avg wait     0.312 ms   x oracle 1.120 [1.104,1.138]
+    Median baseline              avg wait     0.312 ms   x oracle 1.120 [1.104,1.138]
+    Last value                   avg wait     0.301 ms   x oracle 1.082 [1.066,1.099]
+    EWMA a=0.5 (textbook SJF)    avg wait     0.299 ms   x oracle 1.075 [1.060,1.092]
+    EWMA tuned                   avg wait     0.300 ms   x oracle 1.078 [1.063,1.095]
+    EDMD one-step                avg wait     0.300 ms   x oracle 1.079 [1.065,1.095]
+    EDMD recursive               avg wait     0.310 ms   x oracle 1.115 [1.099,1.131]
+    Poly EDMD one-step           avg wait     0.300 ms   x oracle 1.079 [1.066,1.095]
+    Log EDMD one-step            avg wait     0.305 ms   x oracle 1.098 [1.083,1.113]
+    Gradient boosting            avg wait     0.302 ms   x oracle 1.084 [1.070,1.100]
+    FCFS (PID order)             avg wait     0.310 ms   x oracle 1.116 [1.095,1.140]
+    Oracle SJF                   avg wait     0.278 ms   x oracle 1.000 [1.000,1.000]

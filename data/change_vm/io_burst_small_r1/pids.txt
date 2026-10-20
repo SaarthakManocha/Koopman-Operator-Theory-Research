@@ -1,0 +1,7 @@
+cpu 425
+cpu 426
+io 427
+io 428
+phased 429
+io 443
+io 444

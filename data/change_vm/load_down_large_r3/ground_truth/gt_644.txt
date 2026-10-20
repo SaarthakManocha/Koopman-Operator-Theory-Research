@@ -1,0 +1,7 @@
+pid 644
+kind cpu
+run_ns 26506120404
+wait_ns 13143466440
+timeslices 6540
+voluntary 0
+involuntary 6539

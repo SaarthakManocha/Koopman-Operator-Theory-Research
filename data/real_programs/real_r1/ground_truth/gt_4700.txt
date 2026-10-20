@@ -1,0 +1,7 @@
+pid 4700
+kind client
+run_ns 585338351
+wait_ns 2104037757
+timeslices 3993
+voluntary 3716
+involuntary 277

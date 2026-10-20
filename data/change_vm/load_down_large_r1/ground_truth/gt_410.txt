@@ -1,0 +1,7 @@
+pid 410
+kind cpu
+run_ns 23768744251
+wait_ns 16037473255
+timeslices 6538
+voluntary 0
+involuntary 6537

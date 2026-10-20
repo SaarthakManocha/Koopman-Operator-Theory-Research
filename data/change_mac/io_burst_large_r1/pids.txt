@@ -1,0 +1,13 @@
+cpu 40
+cpu 41
+io 42
+io 43
+phased 44
+io 45
+io 46
+io 47
+io 48
+io 49
+io 50
+io 51
+io 52

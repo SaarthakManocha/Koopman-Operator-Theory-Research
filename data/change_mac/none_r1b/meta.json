@@ -1,0 +1,44 @@
+{
+ "name": "none_r1b",
+ "kind": "none",
+ "size": "-",
+ "rep": 1,
+ "ncpu": 4,
+ "t0_mono": 2259.021372742,
+ "planned_change_s": 23.20152427924574,
+ "change_mono": null,
+ "change_s": null,
+ "jobs": [
+  [
+   "cpu",
+   21,
+   0
+  ],
+  [
+   "cpu",
+   22,
+   0
+  ],
+  [
+   "io",
+   23,
+   0
+  ],
+  [
+   "io",
+   24,
+   0
+  ],
+  [
+   "phased",
+   25,
+   0
+  ]
+ ],
+ "kernel": "6.8.0-138-generic",
+ "traced": false,
+ "lost_events": null,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "aarch64"
+}

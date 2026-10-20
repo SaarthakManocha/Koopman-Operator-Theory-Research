@@ -1,0 +1,669 @@
+<meta charset="utf-8">
+<title>Scheduler Observatory</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+/* Layout: an instrument panel. Machine view (cores, queues, sleep pool) beside a Koopman lens,
+   with a per-core timeline and a scrub strip underneath. Single dark look by choice: it is a scope. */
+:root {
+  color-scheme: dark;
+  --ground: #090c13;
+  --panel: #0f141f;
+  --panel-2: #141b29;
+  --line: #222b3d;
+  --ink: #e7eaf2;
+  --ink-2: #a3acc0;
+  --ink-3: #6d778d;
+  --compute: #4b93ea;
+  --io: #ef7440;
+  --phased: #2bbd8b;
+  --other: #6f6a95;
+  --lens: #b3a9ff;
+  --alarm: #ff5a5f;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+html, body { height: auto; }
+[hidden] { display: none !important; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px 28px;
+}
+.wrap { max-width: 1440px; margin: 0 auto; display: grid; gap: 14px; }
+header { display: grid; gap: 10px; }
+.titlerow { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; }
+h1 {
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 3.4vw, 40px);
+  letter-spacing: -0.02em; margin: 0; text-wrap: balance;
+}
+h1 span { color: var(--lens); }
+.kicker { font-family: var(--font-data); font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; }
+.lede { color: var(--ink-2); max-width: 78ch; margin: 0; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.tab {
+  font: 500 13px/1 var(--font-body); color: var(--ink-2); background: var(--panel); border: 1px solid var(--line);
+  border-radius: 999px; padding: 9px 14px; cursor: pointer;
+}
+.tab:hover { color: var(--ink); border-color: #34405a; }
+.tab[aria-pressed="true"] { color: var(--ground); background: var(--ink); border-color: var(--ink); }
+.tab:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--lens); outline-offset: 2px; }
+.desc { color: var(--ink-2); font-size: 13px; margin: 0; max-width: 90ch; min-height: 2.9em; }
+
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 14px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; min-width: 0; }
+.card h2 {
+  font: 500 11px/1 var(--font-data); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+  margin: 0; padding: 14px 16px 0;
+}
+.machine { position: relative; display: flex; flex-direction: column; }
+#machine { display: block; width: 100%; flex: 1; min-height: 520px; }
+.side { display: grid; gap: 14px; grid-template-rows: auto auto minmax(0, 1fr); }
+#lens { display: block; width: 100%; aspect-ratio: 1 / 1; max-width: 100%; }
+.readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px 14px; }
+.ro { background: var(--panel-2); border-radius: 10px; padding: 9px 11px; }
+.ro b { display: block; font: 500 18px/1.15 var(--font-data); font-variant-numeric: tabular-nums; }
+.ro small { color: var(--ink-3); font-size: 11px; }
+.badge { display: inline-block; font: 500 11px/1 var(--font-data); letter-spacing: 0.08em; padding: 5px 8px; border-radius: 6px; }
+.b-train { background: #252c3c; color: var(--ink-2); }
+.b-ok { background: #123528; color: #63dcae; }
+.b-alarm { background: #44151a; color: #ff9a9d; }
+#spark { display: block; width: 100%; height: 70px; }
+.log { padding: 10px 16px 14px; font: 12px/1.55 var(--font-data); color: var(--ink-2); overflow: hidden; min-height: 150px; }
+.log div { padding: 3px 0; border-bottom: 1px solid #182030; }
+.log div:last-child { border-bottom: 0; }
+.log .why { display: block; color: var(--ink-3); font-size: 11px; }
+.log .t { color: var(--ink-3); }
+.log .more { color: var(--ink-3); }
+
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 16px; }
+.controls button, .controls select {
+  font: 500 13px/1 var(--font-body); color: var(--ink); background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 8px; padding: 9px 12px; cursor: pointer;
+}
+.controls button.primary { background: var(--ink); color: var(--ground); border-color: var(--ink); min-width: 84px; }
+.clock { font: 500 20px/1 var(--font-data); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.clock small { color: var(--ink-3); font-size: 12px; margin-left: 4px; }
+.ctl { display: flex; align-items: center; gap: 6px; color: var(--ink-3); font-size: 12px; }
+.spacer { flex: 1; }
+#timeline { display: block; width: 100%; }
+#minimap { display: block; width: 100%; height: 64px; cursor: ew-resize; touch-action: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 14px; }
+.chip {
+  display: flex; align-items: center; gap: 8px; background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 999px; padding: 6px 11px 6px 8px; font-size: 12px; color: var(--ink-2); cursor: pointer;
+}
+.chip i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.chip em { font: normal 11px var(--font-data); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { border-color: var(--ink-2); color: var(--ink); }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.note { padding: 14px 16px 16px; }
+.note h3 { font: 700 16px/1.2 var(--font-display); margin: 0 0 6px; }
+.note p { margin: 0; color: var(--ink-2); font-size: 13px; }
+.note code { font-family: var(--font-data); font-size: 12px; color: var(--ink); }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-3); font: 13px var(--font-data); pointer-events: none; }
+footer { color: var(--ink-3); font-size: 12px; }
+
+@media (max-width: 980px) {
+  .stage { grid-template-columns: minmax(0, 1fr); }
+  .side { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto; }
+  .side .card:last-child { grid-column: 1 / -1; }
+  #machine { min-height: 440px; }
+}
+@media (max-width: 620px) {
+  .side { grid-template-columns: minmax(0, 1fr); }
+  #machine { min-height: 400px; }
+  .clock { font-size: 17px; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="titlerow">
+      <h1>Scheduler <span>Observatory</span></h1>
+      <div class="kicker">Real Linux scheduler traces &middot; EEVDF &middot; replayed in slow motion</div>
+    </div>
+    <p class="lede">Every glowing token is a real process. Watch the kernel decide, microsecond by microsecond,
+      which process gets each core, who waits in the run queue, who sleeps, and when a process is moved to
+      another core. On the right, a Koopman operator fitted to the whole machine watches the same moment.</p>
+    <nav class="tabs" id="tabs" aria-label="Choose a trace"></nav>
+    <p class="desc" id="desc"></p>
+  </header>
+
+  <section class="stage">
+    <div class="card machine">
+      <h2>The machine &middot; cores, run queues, sleepers</h2>
+      <canvas id="machine" aria-label="Animated view of CPU cores, run queues and sleeping processes"></canvas>
+      <div class="loading" id="loading">loading trace&hellip;</div>
+    </div>
+    <div class="side">
+      <div class="card">
+        <h2>Koopman lens</h2>
+        <canvas id="lens" aria-label="Eigenvalues of the Koopman operator on the unit circle"></canvas>
+        <div class="readouts">
+          <div class="ro"><small>spectral radius &rho;</small><b id="rho">&ndash;</b></div>
+          <div class="ro"><small>surprise (training &sigma;)</small><b id="surp">&ndash;</b></div>
+          <div class="ro" style="grid-column: 1 / -1; display:flex; align-items:center; justify-content:space-between; gap:8px">
+            <small id="surpnote">Operator fitted on the first 8 s</small><span id="state" class="badge b-train">TRAINING</span>
+          </div>
+        </div>
+        <canvas id="spark" aria-label="Surprise score over the last ten seconds"></canvas>
+      </div>
+      <div class="card">
+        <h2>Scheduler decisions</h2>
+        <div class="log" id="log" aria-live="off"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="controls">
+      <button class="primary" id="play" type="button">Pause</button>
+      <div class="clock" id="clock">0.000 000<small>s</small></div>
+      <label class="ctl" for="speed">speed
+        <select id="speed">
+          <option value="0.0005">1 ms takes 2 s</option>
+          <option value="0.002" selected>1 ms takes 0.5 s</option>
+          <option value="0.01">1/100 real time</option>
+          <option value="0.1">1/10 real time</option>
+          <option value="1">real time</option>
+        </select>
+      </label>
+      <label class="ctl" for="zoom">timeline window
+        <select id="zoom">
+          <option value="5000">5 ms</option>
+          <option value="20000" selected>20 ms</option>
+          <option value="100000">100 ms</option>
+          <option value="1000000">1 s</option>
+          <option value="5000000">5 s</option>
+        </select>
+      </label>
+      <div class="spacer"></div>
+      <div class="ctl" id="counts"></div>
+    </div>
+    <canvas id="timeline" aria-label="Per-core timeline around the current moment"></canvas>
+    <canvas id="minimap" aria-label="Whole trace with Koopman surprise; drag to move in time"></canvas>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="notes">
+    <div class="card note"><h3>Where these numbers come from</h3>
+      <p>Kernel tracepoints <code>sched_switch</code>, <code>sched_wakeup</code> and <code>sched_migrate_task</code>,
+        recorded live. Every reconstructed process was checked against the kernel's own counters in
+        <code>/proc/&lt;pid&gt;/schedstat</code>: CPU time within about 1%, queue waiting time within about 2%.</p></div>
+    <div class="card note"><h3>How to read the machine</h3>
+      <p>A tile is a core; it glows in the colour of the process it is running, and violet when it runs a kernel or
+        system task. Tokens under a tile are waiting in that core's run queue, with a bar that grows while they wait.
+        The band at the bottom holds processes that are asleep or waiting for the disk.</p></div>
+    <div class="card note"><h3>What the Koopman lens shows</h3>
+      <p>The machine's state every 10 ms (how many cores are busy, how many processes are queued, and how much CPU
+        each kind of job gets) is advanced by one linear operator. Its eigenvalues show how quickly load patterns
+        fade. Surprise is how badly the operator fitted on the first 8 s predicts the next 10 ms.</p></div>
+  </section>
+  <footer>Lab trace: HP Pro Tower 280 G9, 28 logical CPUs, Linux 7.0, captured with perf. Other traces: Linux 6.18
+    virtual machine with 2 cores, captured with tracefs, each repeated three times (one repetition shown).</footer>
+</div>
+
+<script>
+(() => {
+"use strict";
+const CAPTURES = [
+  { file: "data/scale_c02_r1.json", hash: "two-cores" },
+  { file: "data/scale_c01_r1.json", hash: "one-core" },
+  { file: "data/oversub_r1.json", hash: "overloaded" },
+  { file: "data/regime_r1.json", hash: "load-drop" },
+  { file: "data/lab_trace3.json", hash: "lab-28-cores" },
+];
+const LABELS = ["2 cores, 8 jobs", "1 core, 8 jobs", "2 cores, overloaded", "2 cores, load drops at 20 s", "Lab machine, 28 cores"];
+const css = getComputedStyle(document.documentElement);
+const C = name => css.getPropertyValue(name).trim();
+const COL = { cpu: C("--compute"), io: C("--io"), phased: C("--phased"), other: C("--other") };
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const KIND_NAME = { cpu: "Compute", io: "I/O", phased: "Phased" };
+
+// ---------------------------------------------------------------- state
+let D = null;            // decoded capture
+let t = 0;               // playback time, microseconds
+let playing = !reduced;
+let speed = 0.002;
+let zoom = 20000;
+let spotlight = -1;
+let lastFrame = performance.now();
+let lastLogT = -1;
+const cache = {};
+
+// ---------------------------------------------------------------- decoding
+function decode(raw) {
+  const nT = raw.tasks.length;
+  const tasks = raw.tasks.map((x, i) => ({ ...x, i, runs: [], waits: [] }));
+  const counts = {};
+  tasks.forEach(tk => { counts[tk.kind] = (counts[tk.kind] || 0) + 1; tk.name = `${KIND_NAME[tk.kind]} ${counts[tk.kind]}`;
+    tk.tag = { cpu: "C", io: "I", phased: "P" }[tk.kind] + counts[tk.kind]; });
+  // tint each task inside its family so tokens are distinguishable
+  const fam = {};
+  tasks.forEach(tk => { fam[tk.kind] = fam[tk.kind] || []; fam[tk.kind].push(tk); });
+  Object.entries(fam).forEach(([k, list]) => list.forEach((tk, j) => {
+    tk.color = shade(COL[k], list.length > 1 ? (j / (list.length - 1) - 0.5) * 0.5 : 0);
+  }));
+  const R = raw.run, W = raw.wait, M = raw.mig;
+  const runs = [];      // global, sorted by start
+  for (let k = 0; k < R.length; k += 5) {
+    const r = { task: R[k], cpu: R[k + 1], s: R[k + 2], d: R[k + 3], st: R[k + 4] };
+    r.e = r.s + r.d;
+    runs.push(r); tasks[r.task].runs.push(r);
+  }
+  const waitByEnd = new Map();
+  for (let k = 0; k < W.length; k += 5) {
+    const w = { task: W[k], cpu: W[k + 1], s: W[k + 2], d: W[k + 3], cause: W[k + 4] };
+    w.e = w.s + w.d;
+    tasks[w.task].waits.push(w);
+    waitByEnd.set(w.task + ":" + w.e, w);
+  }
+  tasks.forEach(tk => { tk.runs.sort((a, b) => a.s - b.s); tk.waits.sort((a, b) => a.s - b.s);
+    tk.first = Math.min(tk.runs.length ? tk.runs[0].s : Infinity, tk.waits.length ? tk.waits[0].s : Infinity);
+    tk.last = tk.runs.length ? tk.runs[tk.runs.length - 1].e : 0; });
+  const migs = [];
+  for (let k = 0; k < M.length; k += 4) migs.push({ task: M[k], t: M[k + 1], from: M[k + 2], to: M[k + 3] });
+  const cpus = raw.cpus;
+  const cpuIndex = new Map(cpus.map((c, i) => [c, i]));
+  const perCore = cpus.map(() => []);
+  runs.forEach(r => { const ci = cpuIndex.get(r.cpu); if (ci !== undefined) perCore[ci].push(r); });
+  const other = cpus.map(c => {
+    const a = raw.other[String(c)] || []; const s = [], e = [];
+    let acc = 0;
+    for (let k = 0; k < a.length; k += 2) { acc += a[k]; s.push(acc); e.push(acc + a[k + 1]); }
+    return { s, e };
+  });
+  return { raw, tasks, runs, runStarts: runs.map(r => r.s), waitByEnd, migs, migT: migs.map(m => m.t),
+           cpus, cpuIndex, perCore, perCoreEnd: perCore.map(list => prefixMaxEnd(list)), other,
+           dur: raw.duration_us, kp: raw.koopman, marks: raw.marks || [],
+           jobsCpus: raw.jobs_cpus ? new Set(raw.jobs_cpus) : null };
+}
+function prefixMaxEnd(list) { const out = new Float64Array(list.length); let m = -Infinity;
+  list.forEach((r, i) => { m = Math.max(m, r.e); out[i] = m; }); return out; }
+function lowerBound(arr, x) { let lo = 0, hi = arr.length; while (lo < hi) { const m = (lo + hi) >> 1; if (arr[m] < x) lo = m + 1; else hi = m; } return lo; }
+function lastStartAtOrBefore(list, x) { let lo = 0, hi = list.length; while (lo < hi) { const m = (lo + hi) >> 1; if (list[m].s <= x) lo = m + 1; else hi = m; } return lo - 1; }
+
+// state of a task at time x: {mode:'run'|'queue'|'sleep'|'disk'|'none', cpu, since}
+function taskState(tk, x) {
+  if (x < tk.first || x > tk.last) return { mode: "none" };
+  const ri = lastStartAtOrBefore(tk.runs, x);
+  if (ri >= 0 && tk.runs[ri].e >= x) return { mode: "run", cpu: tk.runs[ri].cpu, since: tk.runs[ri].s, r: tk.runs[ri] };
+  const wi = lastStartAtOrBefore(tk.waits, x);
+  if (wi >= 0 && tk.waits[wi].e >= x) return { mode: "queue", cpu: tk.waits[wi].cpu, since: tk.waits[wi].s };
+  const prev = ri >= 0 ? tk.runs[ri] : null;
+  return { mode: prev && prev.st === 2 ? "disk" : "sleep", since: prev ? prev.e : tk.first };
+}
+function otherBusy(ci, x) { const o = D.other[ci]; const i = lowerBound(o.s, x + 1) - 1; return i >= 0 && o.e[i] >= x; }
+
+// ---------------------------------------------------------------- colour helpers
+function shade(hex, amt) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const f = v => Math.round(amt >= 0 ? v + (255 - v) * amt : v * (1 + amt));
+  return `rgb(${f(r)},${f(g)},${f(b)})`; }
+function alpha(col, a) { const m = col.match(/\d+/g); if (col.startsWith("#")) { const n = parseInt(col.slice(1), 16);
+  return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; } return `rgba(${m[0]},${m[1]},${m[2]},${a})`; }
+
+// ---------------------------------------------------------------- canvases
+const cvM = document.getElementById("machine"), cvL = document.getElementById("lens"), cvS = document.getElementById("spark");
+const cvT = document.getElementById("timeline"), cvMini = document.getElementById("minimap");
+function fit(cv, h) { const dpr = Math.min(window.devicePixelRatio || 1, 2); const w = cv.clientWidth;
+  const hh = h || cv.clientHeight; if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(hh * dpr)) {
+    cv.width = Math.round(w * dpr); cv.height = Math.round(hh * dpr); if (h) cv.style.height = h + "px"; }
+  const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return { ctx, w, h: hh }; }
+
+// token positions persist across frames for smooth flights
+let tokens = [];
+function resetTokens() { tokens = D.tasks.map(() => ({ x: null, y: null, trail: [], a: 0 })); }
+
+function machineLayout(w, h) {
+  const n = D.cpus.length, poolH = Math.max(86, h * 0.22), top = 34, gap = 10;
+  const areaH = h - poolH - top - 16;
+  let best = null;
+  for (let cols = 1; cols <= n; cols++) { const rows = Math.ceil(n / cols);
+    const tw = (w - 32 - gap * (cols - 1)) / cols, th = (areaH - gap * (rows - 1)) / rows;
+    const score = Math.min(tw / 1.25, th); if (!best || score > best.score) best = { cols, rows, tw, th, score }; }
+  const tw = Math.min(best.tw, 420), th = Math.min(best.th, 300);
+  const totalW = best.cols * tw + (best.cols - 1) * gap, x0 = (w - totalW) / 2;
+  const tiles = D.cpus.map((c, i) => ({ c, x: x0 + (i % best.cols) * (tw + gap), y: top + Math.floor(i / best.cols) * (th + gap), w: tw, h: th }));
+  const r = Math.max(6, Math.min(22, Math.min(tw, th) * 0.13));
+  return { tiles, r, pool: { x: 16, y: h - poolH - 6, w: w - 32, h: poolH } };
+}
+
+function drawMachine() {
+  const { ctx, w, h } = fit(cvM);
+  ctx.clearRect(0, 0, w, h);
+  const L = machineLayout(w, h);
+  const st = D.tasks.map(tk => taskState(tk, t));
+  // ---- tiles
+  const queues = L.tiles.map(() => []);
+  st.forEach((s, i) => { if (s.mode === "queue") { const ci = D.cpuIndex.get(s.cpu); if (ci !== undefined) queues[ci].push(i); } });
+  queues.forEach(q => q.sort((a, b) => st[a].since - st[b].since));
+  L.tiles.forEach((tl, ci) => {
+    const runner = st.findIndex(s => s.mode === "run" && D.cpuIndex.get(s.cpu) === ci);
+    const busyOther = runner < 0 && otherBusy(ci, t);
+    const col = runner >= 0 ? D.tasks[runner].color : busyOther ? COL.other : null;
+    ctx.save();
+    roundRect(ctx, tl.x, tl.y, tl.w, tl.h, 12);
+    ctx.fillStyle = "#121928"; ctx.fill();
+    if (col) {
+      const g = ctx.createRadialGradient(tl.x + tl.w / 2, tl.y + tl.h * 0.42, 4, tl.x + tl.w / 2, tl.y + tl.h * 0.42, Math.max(tl.w, tl.h) * 0.7);
+      g.addColorStop(0, alpha(col, runner >= 0 ? 0.42 : 0.25)); g.addColorStop(1, alpha(col, 0.03));
+      ctx.fillStyle = g; ctx.fill();
+      ctx.strokeStyle = alpha(col, spotlight >= 0 && runner !== spotlight ? 0.25 : 0.8); ctx.lineWidth = 1.5; ctx.stroke();
+    } else { ctx.strokeStyle = "#222b3d"; ctx.lineWidth = 1; ctx.stroke(); }
+    // die texture: faint grid lines
+    ctx.globalAlpha = 0.07; ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1;
+    for (let gx = tl.x + 12; gx < tl.x + tl.w; gx += 12) { ctx.beginPath(); ctx.moveTo(gx, tl.y + 4); ctx.lineTo(gx, tl.y + 10); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = C("--ink-3"); ctx.font = `500 ${tl.w < 90 ? 10 : 11}px ${C("--font-data")}`;
+    ctx.fillText(`core ${tl.c}`, tl.x + 8, tl.y + (tl.w < 90 ? 22 : 24));
+    if (D.jobsCpus && !D.jobsCpus.has(tl.c) && tl.w > 160) {
+      ctx.fillStyle = C("--ink-3"); ctx.font = `11px ${C("--font-body")}`;
+      ctx.fillText("jobs not allowed on this core", tl.x + 8, tl.y + tl.h - 12);
+    }
+    if (runner >= 0 && tl.w > 160) {
+      const s = st[runner];
+      ctx.fillStyle = C("--ink"); ctx.font = `500 12px ${C("--font-body")}`;
+      ctx.fillText(D.tasks[runner].name, tl.x + 8, tl.y + 42);
+      ctx.fillStyle = C("--ink-2"); ctx.font = `11px ${C("--font-data")}`;
+      const lbl = `on core ${fmtDur(t - s.since)}`;
+      ctx.fillText(lbl, tl.x + tl.w - ctx.measureText(lbl).width - 8, tl.y + (tl.w < 90 ? 22 : 24));
+    } else if (busyOther && tl.w > 160) {
+      ctx.fillStyle = C("--ink-3"); ctx.font = `11px ${C("--font-body")}`;
+      ctx.fillText("kernel / system task", tl.x + 8, tl.y + 42);
+    }
+    ctx.restore();
+  });
+  // ---- sleep pool
+  const P = L.pool;
+  ctx.save(); roundRect(ctx, P.x, P.y, P.w, P.h, 12); ctx.fillStyle = "#0c111b"; ctx.fill();
+  ctx.strokeStyle = "#1c2433"; ctx.setLineDash([4, 5]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = C("--ink-3"); ctx.font = `500 11px ${C("--font-data")}`;
+  ctx.fillText("ASLEEP  (timer / event)", P.x + 12, P.y + 18);
+  ctx.fillText("WAITING ON DISK", P.x + P.w * 0.62 + 12, P.y + 18);
+  ctx.strokeStyle = "#1c2433"; ctx.beginPath(); ctx.moveTo(P.x + P.w * 0.62, P.y + 8); ctx.lineTo(P.x + P.w * 0.62, P.y + P.h - 8); ctx.stroke();
+  ctx.restore();
+
+  // ---- targets
+  const r = L.r, now = performance.now();
+  const sleepers = [], diskers = [];
+  st.forEach((s, i) => { if (s.mode === "sleep") sleepers.push(i); if (s.mode === "disk") diskers.push(i); });
+  const targets = st.map((s, i) => {
+    if (s.mode === "run") { const tl = L.tiles[D.cpuIndex.get(s.cpu)]; if (!tl) return null;
+      return { x: tl.x + tl.w / 2, y: tl.y + tl.h * 0.44, big: true }; }
+    if (s.mode === "queue") { const ci = D.cpuIndex.get(s.cpu); const tl = L.tiles[ci]; if (!tl) return null;
+      const k = queues[ci].indexOf(i), per = Math.max(1, Math.floor((tl.w - 16) / (r * 2 + 6)));
+      return { x: tl.x + 8 + r + (k % per) * (r * 2 + 6), y: tl.y + tl.h - r - 8 - Math.floor(k / per) * (r * 2 + 4), q: true, since: s.since }; }
+    if (s.mode === "sleep" || s.mode === "disk") {
+      const list = s.mode === "sleep" ? sleepers : diskers, k = list.indexOf(i);
+      const ax = s.mode === "sleep" ? P.x + 16 : P.x + P.w * 0.62 + 16, aw = s.mode === "sleep" ? P.w * 0.62 - 32 : P.w * 0.38 - 32;
+      const per = Math.max(1, Math.floor(aw / (r * 2 + 10)));
+      return { x: ax + r + (k % per) * (r * 2 + 10), y: P.y + 30 + r + Math.floor(k / per) * (r * 2 + 8) }; }
+    return null;
+  });
+  // ---- move + draw tokens
+  const dtSec = Math.min(0.05, (now - (drawMachine.prev || now)) / 1000); drawMachine.prev = now;
+  const k = reduced || jumped ? 1 : 1 - Math.exp(-dtSec * 14);
+  targets.forEach((tg, i) => {
+    const tk = tokens[i], task = D.tasks[i];
+    if (!tg) { tk.a += (0 - tk.a) * k; if (tk.a < 0.02) { tk.x = null; tk.trail = []; } }
+    else {
+      if (tk.x === null) { tk.x = tg.x; tk.y = tg.y; }
+      tk.x += (tg.x - tk.x) * k; tk.y += (tg.y - tk.y) * k; tk.a += (1 - tk.a) * k;
+      if (!reduced) { tk.trail.push([tk.x, tk.y]); if (tk.trail.length > 14) tk.trail.shift(); }
+    }
+    if (tk.x === null) return;
+    const dim = spotlight >= 0 && spotlight !== i ? 0.22 : 1;
+    // trail
+    if (tk.trail.length > 2) { ctx.save(); ctx.lineCap = "round";
+      for (let j = 1; j < tk.trail.length; j++) { ctx.strokeStyle = alpha(task.color, (j / tk.trail.length) * 0.5 * tk.a * dim);
+        ctx.lineWidth = r * 0.9 * (j / tk.trail.length); ctx.beginPath(); ctx.moveTo(...tk.trail[j - 1]); ctx.lineTo(...tk.trail[j]); ctx.stroke(); }
+      ctx.restore(); }
+    const rr = tg && tg.big ? r * 1.45 : r;
+    ctx.save(); ctx.globalAlpha = tk.a * dim;
+    ctx.shadowColor = task.color; ctx.shadowBlur = tg && tg.big ? 26 : 10;
+    ctx.fillStyle = task.color; ctx.beginPath(); ctx.arc(tk.x, tk.y, rr, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    // running: slice progress ring
+    if (tg && tg.big) { const s = st[i]; const el = t - s.since, frac = Math.min(1, el / Math.max(1, s.r.d));
+      ctx.strokeStyle = "rgba(255,255,255,0.85)"; ctx.lineWidth = 2.5; ctx.beginPath();
+      ctx.arc(tk.x, tk.y, rr + 5, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2); ctx.stroke(); }
+    // queued: waiting bar
+    if (tg && tg.q) { const wt = t - tg.since, len = Math.min(r * 2.4, 4 + Math.log10(1 + wt) * r * 0.6);
+      ctx.fillStyle = "rgba(255,255,255,0.55)"; ctx.fillRect(tk.x - r, tk.y - r - 6, len, 2.5); }
+    ctx.fillStyle = "#0a0d14"; ctx.font = `600 ${Math.max(8, rr * 0.75)}px ${C("--font-data")}`;
+    const tag = task.tag;
+    const tw = ctx.measureText(tag).width; if (rr > 7) ctx.fillText(tag, tk.x - tw / 2, tk.y + rr * 0.27);
+    ctx.restore();
+  });
+  // ---- migrations: arcs for the last few ms of playback
+  const mi1 = lowerBound(D.migT, t + 1), mi0 = lowerBound(D.migT, t - Math.max(2000, speed * 1e6 * 0.6));
+  for (let m = Math.max(mi0, mi1 - 12); m < mi1; m++) {
+    const mg = D.migs[m], a = L.tiles[D.cpuIndex.get(mg.from)], b = L.tiles[D.cpuIndex.get(mg.to)];
+    if (!a || !b) continue;
+    const age = (t - mg.t) / Math.max(2000, speed * 1e6 * 0.6);
+    const ax = a.x + a.w / 2, ay = a.y + a.h / 2, bx = b.x + b.w / 2, by = b.y + b.h / 2;
+    ctx.save(); ctx.strokeStyle = alpha(D.tasks[mg.task].color, 0.9 * (1 - age)); ctx.lineWidth = 2; ctx.setLineDash([6, 5]);
+    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.quadraticCurveTo((ax + bx) / 2, Math.min(ay, by) - 50, bx, by); ctx.stroke(); ctx.restore();
+  }
+  jumped = false;
+}
+let jumped = true;
+function roundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+// ---------------------------------------------------------------- Koopman lens
+function eigIndexAt(sec) { const et = D.kp.eig_t; let lo = 0, hi = et.length; while (lo < hi) { const m = (lo + hi) >> 1; if (et[m] <= sec) lo = m + 1; else hi = m; } return lo - 1; }
+function surpriseAt(sec) { const i = Math.round((sec - D.kp.surprise_t0) / D.kp.dt); return i >= 0 && i < D.kp.surprise.length ? D.kp.surprise[i] : null; }
+function drawLens() {
+  const { ctx, w, h } = fit(cvL, cvL.clientWidth);
+  ctx.clearRect(0, 0, w, h);
+  const cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.38;
+  ctx.strokeStyle = "#222b3d"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(cx - R * 1.15, cy); ctx.lineTo(cx + R * 1.15, cy); ctx.moveTo(cx, cy - R * 1.15); ctx.lineTo(cx, cy + R * 1.15); ctx.stroke();
+  [0.5, 1].forEach(rad => { ctx.beginPath(); ctx.arc(cx, cy, R * rad, 0, Math.PI * 2);
+    ctx.strokeStyle = rad === 1 ? alpha(C("--lens"), 0.55) : "#1d2534"; ctx.setLineDash(rad === 1 ? [] : [3, 4]); ctx.stroke(); });
+  ctx.setLineDash([]);
+  ctx.fillStyle = C("--ink-3"); ctx.font = `10px ${C("--font-data")}`;
+  ctx.fillText("|λ| = 1", cx + R * 0.74, cy - R * 0.74);
+  ctx.fillText("Re", cx + R * 1.05, cy - 6); ctx.fillText("Im", cx + 6, cy - R * 1.05);
+  const sec = t / 1e6, k = eigIndexAt(sec);
+  if (k < 0) { ctx.fillStyle = C("--ink-3"); ctx.font = `12px ${C("--font-body")}`; ctx.fillText("first 2 s window still filling", cx - 85, cy + R * 0.3);
+    document.getElementById("rho").textContent = "–"; }
+  for (let j = Math.max(0, k - 14); j <= k; j++) {
+    const age = (k - j) / 15, pts = D.kp.eig[j];
+    pts.forEach(([re, im]) => { const x = cx + re * R, y = cy - im * R;
+      ctx.fillStyle = alpha(C("--lens"), j === k ? 1 : 0.35 * (1 - age));
+      if (j === k) { ctx.shadowColor = C("--lens"); ctx.shadowBlur = 12; }
+      ctx.beginPath(); ctx.arc(x, y, j === k ? 5 : 2.5, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0; });
+  }
+  if (k >= 0) { const rho = Math.max(...D.kp.eig[k].map(([a, b]) => Math.hypot(a, b)));
+    document.getElementById("rho").textContent = rho.toFixed(3);
+    ctx.fillStyle = C("--ink-2"); ctx.font = `11px ${C("--font-data")}`;
+    ctx.fillText(`window ${(D.kp.eig_t[k] - 2).toFixed(1)}–${D.kp.eig_t[k].toFixed(1)} s`, 10, h - 10); }
+  // surprise
+  const sv = surpriseAt(sec), el = document.getElementById("surp"), badge = document.getElementById("state");
+  el.textContent = sv === null ? "–" : sv.toFixed(1);
+  if (sec < D.kp.train_s) { badge.textContent = "TRAINING"; badge.className = "badge b-train"; }
+  else if (sv !== null && sv > 3) { badge.textContent = "SURPRISE"; badge.className = "badge b-alarm"; }
+  else { badge.textContent = "AS PREDICTED"; badge.className = "badge b-ok"; }
+  drawSpark(sec);
+}
+function drawSpark(sec) {
+  const { ctx, w, h } = fit(cvS); ctx.clearRect(0, 0, w, h);
+  const span = 10, s0 = sec - span, pad = 16, top = 8, bot = h - 14, ymax = 10;
+  const y = v => bot - Math.max(0, Math.min(ymax, v + 1)) / (ymax + 1) * (bot - top);
+  ctx.strokeStyle = alpha(C("--alarm"), 0.5); ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(pad, y(3)); ctx.lineTo(w - pad, y(3)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = C("--ink-3"); ctx.font = `10px ${C("--font-data")}`; ctx.fillText("alarm 3σ", w - pad - 52, y(3) - 4);
+  ctx.fillText(`last ${span} s`, pad, h - 2);
+  ctx.beginPath(); let started = false;
+  for (let px = 0; px <= w - 2 * pad; px += 2) { const s = s0 + (px / (w - 2 * pad)) * span, v = surpriseAt(s);
+    if (v === null) continue; const yy = y(v); if (!started) { ctx.moveTo(pad + px, yy); started = true; } else ctx.lineTo(pad + px, yy); }
+  ctx.strokeStyle = C("--lens"); ctx.lineWidth = 1.6; ctx.stroke();
+}
+
+// ---------------------------------------------------------------- timeline
+function drawTimeline() {
+  const n = D.cpus.length, lane = n > 8 ? 11 : n > 2 ? 26 : 40, head = 22;
+  const { ctx, w, h } = fit(cvT, head + n * lane + 10);
+  ctx.clearRect(0, 0, w, h);
+  const left = 56, right = w - 12, x0 = t - zoom / 2, x1 = t + zoom / 2;
+  const X = v => left + (v - x0) / (x1 - x0) * (right - left);
+  ctx.font = `10px ${C("--font-data")}`;
+  // ticks
+  const step = niceStep(zoom / Math.max(2, Math.floor((right - left) / 130))); ctx.fillStyle = C("--ink-3"); ctx.strokeStyle = "#1a2130";
+  for (let v = Math.ceil(x0 / step) * step; v <= x1; v += step) { const x = X(v);
+    ctx.beginPath(); ctx.moveTo(x, head - 4); ctx.lineTo(x, h - 6); ctx.stroke(); ctx.fillText(fmtTick(v - t), x + 3, 12); }
+  for (let ci = 0; ci < n; ci++) {
+    const yy = head + ci * lane;
+    if (lane >= 20 || ci % 4 === 0) { ctx.fillStyle = C("--ink-3"); ctx.fillText(`core ${D.cpus[ci]}`, 6, yy + Math.min(lane, 14) - 2); }
+    // other tasks
+    const o = D.other[ci]; let i = Math.max(0, lowerBound(o.s, x0) - 1);
+    ctx.fillStyle = alpha(COL.other, 0.55);
+    for (; i < o.s.length && o.s[i] <= x1; i++) { if (o.e[i] < x0) continue;
+      const a = X(Math.max(x0, o.s[i])), b = X(Math.min(x1, o.e[i])); ctx.fillRect(a, yy + 2, Math.max(1, b - a), lane - 4); }
+    // tracked runs
+    const list = D.perCore[ci], ends = D.perCoreEnd[ci];
+    let j = lastStartAtOrBefore(list, x0); j = Math.max(0, j);
+    while (j > 0 && ends[j - 1] >= x0) j--;
+    for (; j < list.length && list[j].s <= x1; j++) { const r = list[j]; if (r.e < x0) continue;
+      const a = X(Math.max(x0, r.s)), b = X(Math.min(x1, r.e)), tk = D.tasks[r.task];
+      ctx.fillStyle = spotlight >= 0 && spotlight !== r.task ? alpha(tk.color, 0.2) : tk.color;
+      ctx.fillRect(a, yy + 1, Math.max(1, b - a), lane - 2);
+      if (r.st === 0 && r.e <= x1 && lane >= 20) { ctx.fillStyle = "rgba(255,255,255,0.8)"; ctx.fillRect(b - 1.5, yy + 1, 1.5, lane - 2); } }
+  }
+  // queue waits as thin lines on each lane
+  D.tasks.forEach(tk => { const ws = tk.waits; let j = Math.max(0, lastStartAtOrBefore(ws, x0) - 1);
+    for (; j < ws.length && ws[j].s <= x1; j++) { const wv = ws[j]; if (wv.e < x0) continue; const ci = D.cpuIndex.get(wv.cpu); if (ci === undefined) continue;
+      const yy = head + ci * lane + lane - 2; ctx.strokeStyle = alpha(tk.color, spotlight >= 0 && spotlight !== tk.i ? 0.15 : 0.75);
+      ctx.lineWidth = 1.5; ctx.setLineDash([2, 2]); ctx.beginPath(); ctx.moveTo(X(Math.max(x0, wv.s)), yy); ctx.lineTo(X(Math.min(x1, wv.e)), yy); ctx.stroke(); ctx.setLineDash([]); } });
+  // playhead
+  ctx.strokeStyle = C("--ink"); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(X(t), head - 6); ctx.lineTo(X(t), h - 4); ctx.stroke();
+}
+function niceStep(x) { const p = Math.pow(10, Math.floor(Math.log10(x))); const m = x / p; return (m < 2 ? 1 : m < 5 ? 2 : 5) * p; }
+function fmtTick(v) { const a = Math.abs(v); const s = v < 0 ? "−" : v > 0 ? "+" : ""; return a >= 1e6 ? s + (a / 1e6).toFixed(1) + " s" : a >= 1e3 ? s + (a / 1e3).toFixed(a >= 1e4 ? 0 : 1) + " ms" : s + Math.round(a) + " µs"; }
+function fmtDur(us) { return us >= 1e6 ? (us / 1e6).toFixed(2) + " s" : us >= 1e3 ? (us / 1e3).toFixed(us >= 1e4 ? 0 : 1) + " ms" : Math.round(us) + " µs"; }
+function fmtClock(us) { const s = us / 1e6; const whole = Math.floor(s), frac = Math.round((s - whole) * 1e6).toString().padStart(6, "0");
+  return `${whole}.${frac.slice(0, 3)} ${frac.slice(3)}`; }
+
+// ---------------------------------------------------------------- minimap
+function drawMini() {
+  const { ctx, w, h } = fit(cvMini); ctx.clearRect(0, 0, w, h);
+  const left = 56, right = w - 12, X = v => left + v / D.dur * (right - left);
+  ctx.fillStyle = "#0c111b"; ctx.fillRect(left, 6, right - left, h - 18);
+  ctx.fillStyle = "rgba(179,169,255,0.08)"; ctx.fillRect(left, 6, X(D.kp.train_s * 1e6) - left, h - 18);
+  ctx.fillStyle = C("--ink-3"); ctx.font = `10px ${C("--font-data")}`; ctx.fillText("Koopman", 4, 24); ctx.fillText("surprise", 4, 36);
+  ctx.fillText("training", left + 4, h - 2);
+  const s = D.kp.surprise, top = 8, bot = h - 14;
+  ctx.beginPath();
+  for (let px = 0; px <= right - left; px++) { const sec = (px / (right - left)) * D.dur / 1e6; const v = surpriseAt(sec); if (v === null) continue;
+    const yy = bot - Math.max(0, Math.min(12, v + 1)) / 13 * (bot - top); if (px === 0) ctx.moveTo(left + px, yy); else ctx.lineTo(left + px, yy); }
+  ctx.strokeStyle = C("--lens"); ctx.lineWidth = 1.2; ctx.stroke();
+  const y3 = bot - 4 / 13 * (bot - top); ctx.strokeStyle = alpha(C("--alarm"), 0.4); ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(left, y3); ctx.lineTo(right, y3); ctx.stroke(); ctx.setLineDash([]);
+  D.marks.forEach(m => { const x = X(m.t * 1e6); ctx.strokeStyle = C("--ink-2"); ctx.beginPath(); ctx.moveTo(x, 6); ctx.lineTo(x, h - 12); ctx.stroke(); });
+  if (D.marks.length) { const m = D.marks[0]; ctx.fillStyle = C("--ink-2"); const lbl = D.marks.length > 1 ? "CPU-bound jobs exit" : m.label;
+    const x = X(m.t * 1e6); ctx.fillText(lbl, Math.min(x + 4, right - ctx.measureText(lbl).width), h - 2); }
+  const px = X(t); ctx.fillStyle = C("--ink"); ctx.fillRect(px - 1, 2, 2, h - 12);
+  ctx.beginPath(); ctx.moveTo(px - 5, 2); ctx.lineTo(px + 5, 2); ctx.lineTo(px, 8); ctx.fill();
+}
+
+// ---------------------------------------------------------------- decision log
+const logEl = document.getElementById("log");
+function updateLog(prevT) {
+  if (Math.abs(t - prevT) > 2e6 || t < prevT) { logEl.innerHTML = ""; lastLogT = t; return; }
+  const i0 = lowerBound(D.runStarts, prevT + 1), i1 = lowerBound(D.runStarts, t + 1);
+  if (i1 <= i0) return;
+  const lines = [];
+  const from = Math.max(i0, i1 - 6);
+  for (let i = from; i < i1; i++) { const r = D.runs[i], tk = D.tasks[r.task];
+    const w = D.waitByEnd.get(r.task + ":" + r.s);
+    let why = "";
+    if (w) why = w.cause === 1 ? `back after preemption, queued ${fmtDur(w.d)}` : w.cause === 2 ? `new process, queued ${fmtDur(w.d)}` : `woke up, queued ${fmtDur(w.d)}`;
+    lines.push(`<div><span class="t">${fmtClock(r.s)}</span> core ${r.cpu} &larr; <b style="color:${tk.color}">${tk.name}</b>${why ? `<span class="why">${why}</span>` : ""}</div>`); }
+  if (i1 - i0 > 6) lines.unshift(`<div class="more">+${i1 - i0 - 6} more decisions in this frame</div>`);
+  const keep = Math.max(0, 7 - lines.length);
+  const kept = keep ? [...logEl.children].slice(-keep).map(e => e.outerHTML) : [];
+  logEl.innerHTML = kept.concat(lines).slice(-7).join("");
+}
+
+// ---------------------------------------------------------------- legend + counters
+function buildLegend() {
+  const el = document.getElementById("legend"); el.innerHTML = "";
+  D.tasks.forEach(tk => { const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.setAttribute("aria-pressed", "false");
+    b.innerHTML = `<i style="background:${tk.color}"></i>${tk.name}<em id="st-${tk.i}"></em>`;
+    b.title = `PID ${tk.pid}. Click to follow this process.`;
+    b.onclick = () => { spotlight = spotlight === tk.i ? -1 : tk.i;
+      el.querySelectorAll(".chip").forEach((c, j) => c.setAttribute("aria-pressed", String(j === spotlight))); };
+    el.appendChild(b); });
+  const o = document.createElement("span"); o.className = "chip"; o.style.cursor = "default";
+  o.innerHTML = `<i style="background:${COL.other}"></i>kernel and system tasks`; el.appendChild(o);
+}
+function updateCounters() {
+  const sw = lowerBound(D.runStarts, t + 1), mg = lowerBound(D.migT, t + 1);
+  document.getElementById("counts").textContent = `${sw.toLocaleString()} switches · ${mg.toLocaleString()} migrations so far · ${D.cpus.length} core${D.cpus.length > 1 ? "s" : ""}`;
+  D.tasks.forEach(tk => { const s = taskState(tk, t), el = document.getElementById("st-" + tk.i); if (!el) return;
+    el.textContent = s.mode === "run" ? `running · core ${s.cpu}` : s.mode === "queue" ? `queued ${fmtDur(t - s.since)}` :
+      s.mode === "sleep" ? "asleep" : s.mode === "disk" ? "disk wait" : (t < tk.first ? "not started" : "exited"); });
+}
+
+// ---------------------------------------------------------------- main loop
+function frame(now) {
+  const dt = Math.min(0.1, (now - lastFrame) / 1000); lastFrame = now;
+  if (D) {
+    const prev = t;
+    if (playing) { t += dt * speed * 1e6; if (t > D.dur) t = 0; }
+    document.getElementById("clock").innerHTML = `${fmtClock(t)}<small>s</small>`;
+    drawMachine(); drawLens(); drawTimeline(); drawMini(); updateLog(prev); updateCounters();
+  }
+  requestAnimationFrame(frame);
+}
+
+// ---------------------------------------------------------------- loading + UI
+const START = { "two-cores": 10.0, "one-core": 10.0, "overloaded": 10.0, "load-drop": 19.6, "lab-28-cores": 41.5 };
+async function load(idx) {
+  const cap = CAPTURES[idx];
+  document.querySelectorAll(".tab").forEach((b, j) => b.setAttribute("aria-pressed", String(j === idx)));
+  document.getElementById("loading").hidden = false;
+  try { if (!cache[cap.file]) { const res = await fetch(cap.file); if (!res.ok) throw new Error(res.status); cache[cap.file] = decode(await res.json()); }
+  } catch (e) { document.getElementById("loading").textContent = "Could not load this trace. Reload the page to try again."; return; }
+  D = cache[cap.file]; resetTokens(); spotlight = -1; jumped = true;
+  t = (START[cap.hash] || 5) * 1e6; logEl.innerHTML = "";
+  document.getElementById("desc").textContent = D.raw.desc;
+  document.getElementById("surpnote").textContent = `Operator fitted on the first ${D.kp.train_s} s · ${D.kp.state_dims} state variables`;
+  buildLegend(); document.getElementById("loading").hidden = true;
+  try { history.replaceState(null, "", "#" + cap.hash); } catch (e) {}
+}
+const tabs = document.getElementById("tabs");
+CAPTURES.forEach((c, i) => { const b = document.createElement("button"); b.type = "button"; b.className = "tab"; b.textContent = LABELS[i];
+  b.setAttribute("aria-pressed", "false"); b.onclick = () => load(i); tabs.appendChild(b); });
+const playBtn = document.getElementById("play");
+const syncPlay = () => { playBtn.textContent = playing ? "Pause" : "Play"; };
+playBtn.onclick = () => { playing = !playing; syncPlay(); };
+document.getElementById("speed").onchange = e => { speed = +e.target.value; };
+document.getElementById("zoom").onchange = e => { zoom = +e.target.value; };
+function scrub(ev) { if (!D) return; const rect = cvMini.getBoundingClientRect(); const left = 56, right = rect.width - 12;
+  const v = Math.max(0, Math.min(1, (ev.clientX - rect.left - left) / (right - left))); t = v * D.dur; jumped = true; }
+let dragging = false;
+cvMini.addEventListener("pointerdown", e => { dragging = true; cvMini.setPointerCapture(e.pointerId); scrub(e); });
+cvMini.addEventListener("pointermove", e => { if (dragging) scrub(e); });
+cvMini.addEventListener("pointerup", () => { dragging = false; });
+document.addEventListener("keydown", e => { if (e.target.closest("select")) return;
+  if (e.code === "Space" && !e.target.closest("button")) { e.preventDefault(); playing = !playing; syncPlay(); }
+  if (e.key === "ArrowRight" && D) { t = Math.min(D.dur, t + zoom / 4); jumped = true; }
+  if (e.key === "ArrowLeft" && D) { t = Math.max(0, t - zoom / 4); jumped = true; } });
+syncPlay();
+window.addEventListener("hashchange", () => { const i = CAPTURES.findIndex(c => "#" + c.hash === location.hash);
+  if (i >= 0 && (!D || CAPTURES[i].file !== Object.keys(cache).find(k => cache[k] === D))) load(i); });
+const initial = Math.max(0, CAPTURES.findIndex(c => "#" + c.hash === location.hash));
+load(initial);
+requestAnimationFrame(frame);
+})();
+</script>

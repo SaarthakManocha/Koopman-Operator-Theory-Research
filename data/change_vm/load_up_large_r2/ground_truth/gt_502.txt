@@ -1,0 +1,7 @@
+pid 502
+kind phased
+run_ns 10873110125
+wait_ns 13279739252
+timeslices 8080
+voluntary 3121
+involuntary 4958

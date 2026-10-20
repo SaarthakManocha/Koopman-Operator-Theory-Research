@@ -1,0 +1,19 @@
+{
+ "cores": 1,
+ "rep": 3,
+ "secs": 30,
+ "ncpu": 4,
+ "kernel": "6.8.0-138-generic",
+ "machine": "aarch64",
+ "exit_codes": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "wall_s": 30.098604888999944
+}

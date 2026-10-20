@@ -1,0 +1,7 @@
+pid 464
+kind cpu
+run_ns 33010897524
+wait_ns 6608282536
+timeslices 8442
+voluntary 0
+involuntary 8441

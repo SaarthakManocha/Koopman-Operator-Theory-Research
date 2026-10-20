@@ -1,0 +1,7 @@
+pid 4716
+kind ffmpeg
+run_ns 10176
+wait_ns 4514
+timeslices 1
+voluntary 1
+involuntary 0

@@ -1,0 +1,7 @@
+pid 5016
+kind node
+run_ns 25687190393
+wait_ns 18190768618
+timeslices 23755
+voluntary 4701
+involuntary 19054

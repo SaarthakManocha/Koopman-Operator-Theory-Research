@@ -1,0 +1,5 @@
+cpu 599
+cpu 600
+io 601
+io 602
+phased 603

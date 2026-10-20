@@ -1,0 +1,6 @@
+impl,op,ns
+Python/numpy (this study),predict next burst,8175.6369999652625
+Python/numpy (this study),refit on 300 bursts,40871.90500001725
+Python/numpy (this study),3x3 operator step only,881.9508000044607
+"C, -O2",predict next burst,5.597
+"C, -O2",online RLS update,28.968

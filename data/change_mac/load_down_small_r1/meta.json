@@ -1,0 +1,49 @@
+{
+ "name": "load_down_small_r1",
+ "kind": "load_down",
+ "size": "small",
+ "rep": 1,
+ "ncpu": 4,
+ "t0_mono": 2019.136253086,
+ "planned_change_s": 19.543566228418413,
+ "change_mono": 2038.770983262,
+ "change_s": 19.634730176000176,
+ "jobs": [
+  [
+   "cpu",
+   38,
+   0
+  ],
+  [
+   "cpu",
+   39,
+   0
+  ],
+  [
+   "io",
+   40,
+   0
+  ],
+  [
+   "io",
+   41,
+   0
+  ],
+  [
+   "phased",
+   42,
+   0
+  ],
+  [
+   "cpu_extra",
+   43,
+   0
+  ]
+ ],
+ "kernel": "6.8.0-138-generic",
+ "traced": false,
+ "lost_events": null,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "aarch64"
+}

@@ -1,0 +1,7 @@
+pid 365
+kind cpu
+run_ns 8423016962
+wait_ns 11577375555
+timeslices 97425
+voluntary 0
+involuntary 97424

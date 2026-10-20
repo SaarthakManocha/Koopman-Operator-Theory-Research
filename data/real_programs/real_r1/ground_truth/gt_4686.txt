@@ -1,0 +1,7 @@
+pid 4686
+kind redis
+run_ns 1026084269
+wait_ns 1826372609
+timeslices 13802
+voluntary 13504
+involuntary 298

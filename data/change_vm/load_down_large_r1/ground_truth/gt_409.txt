@@ -1,0 +1,7 @@
+pid 409
+kind cpu
+run_ns 23856421803
+wait_ns 15974585357
+timeslices 6607
+voluntary 0
+involuntary 6606

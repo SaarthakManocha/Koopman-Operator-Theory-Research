@@ -1,0 +1,7 @@
+pid 42
+kind cpu
+run_ns 16110465852
+wait_ns 8465369305
+timeslices 4104
+voluntary 0
+involuntary 4103

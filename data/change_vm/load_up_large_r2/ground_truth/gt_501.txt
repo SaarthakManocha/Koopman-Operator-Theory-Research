@@ -1,0 +1,7 @@
+pid 501
+kind io
+run_ns 196282975
+wait_ns 396610604
+timeslices 1682
+voluntary 1567
+involuntary 114

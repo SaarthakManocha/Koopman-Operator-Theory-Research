@@ -1,0 +1,11 @@
+loaded 13 captures in 0s
+  simulated oversub_r1
+  simulated oversub_r2
+  simulated oversub_r3
+  simulated scale_c01_r1
+  simulated scale_c01_r2
+  simulated scale_c01_r3
+  simulated scale_c02_r1
+  simulated scale_c02_r2
+  simulated scale_c02_r3
+  simulated lab_trace3

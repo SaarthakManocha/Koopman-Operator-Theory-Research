@@ -1,0 +1,54 @@
+{
+ "name": "load_up_large_r1",
+ "kind": "load_up",
+ "size": "large",
+ "rep": 1,
+ "ncpu": 2,
+ "t0_mono": 733.081656856,
+ "planned_change_s": 20.723923932168002,
+ "change_mono": 753.805674744,
+ "change_s": 20.72401788800005,
+ "jobs": [
+  [
+   "cpu",
+   387,
+   0
+  ],
+  [
+   "cpu",
+   388,
+   0
+  ],
+  [
+   "io",
+   389,
+   0
+  ],
+  [
+   "io",
+   390,
+   0
+  ],
+  [
+   "phased",
+   391,
+   0
+  ],
+  [
+   "cpu_extra",
+   392,
+   0
+  ],
+  [
+   "cpu_extra",
+   393,
+   0
+  ]
+ ],
+ "kernel": "6.18.44-fc-v139",
+ "traced": true,
+ "lost_events": 0,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "x86_64"
+}

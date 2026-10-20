@@ -1,0 +1,8 @@
+cpu 1408
+cpu 1409
+cpu 1410
+io 1411
+io 1412
+io 1413
+phased 1414
+phased 1415

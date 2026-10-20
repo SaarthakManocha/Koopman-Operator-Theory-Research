@@ -1,0 +1,7 @@
+pid 491
+kind cpu
+run_ns 13982067447
+wait_ns 9698723975
+timeslices 4767
+voluntary 0
+involuntary 4766

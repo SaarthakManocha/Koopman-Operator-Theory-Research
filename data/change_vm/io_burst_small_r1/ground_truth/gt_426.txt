@@ -1,0 +1,7 @@
+pid 426
+kind cpu
+run_ns 29307952182
+wait_ns 10442826088
+timeslices 9830
+voluntary 0
+involuntary 9829

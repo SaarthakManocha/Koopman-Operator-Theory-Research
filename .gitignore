@@ -1,0 +1,18 @@
+# uncompressed copy of Trace 3 (212 MB, over GitHub's limit); the code reads data/raw/trace3.txt.gz
+data/raw/trace3.txt
+# build products
+__pycache__/
+*.pyc
+closedloop/task
+kit/closedloop/task
+outputs/extras/koopman_cost
+paper/*.aux
+paper/*.log
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.out
+paper/*.blg
+paper/*.bak
+kit.zip
+# coursework report, kept private
+report/

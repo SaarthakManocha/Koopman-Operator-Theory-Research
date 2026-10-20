@@ -1,0 +1,7 @@
+pid 5363
+kind ffmpeg
+run_ns 473951661
+wait_ns 2186596948
+timeslices 1774
+voluntary 1499
+involuntary 275

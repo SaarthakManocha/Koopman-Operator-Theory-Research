@@ -1,0 +1,7 @@
+pid 451
+kind cpu
+run_ns 29968919458
+wait_ns 9857363927
+timeslices 15492
+voluntary 0
+involuntary 15491

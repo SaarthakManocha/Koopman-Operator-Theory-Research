@@ -1,0 +1,44 @@
+{
+ "name": "none_r3a",
+ "kind": "none",
+ "size": "-",
+ "rep": 3,
+ "ncpu": 4,
+ "t0_mono": 2969.994801456,
+ "planned_change_s": 21.58874646230614,
+ "change_mono": null,
+ "change_s": null,
+ "jobs": [
+  [
+   "cpu",
+   29,
+   0
+  ],
+  [
+   "cpu",
+   30,
+   0
+  ],
+  [
+   "io",
+   31,
+   0
+  ],
+  [
+   "io",
+   32,
+   0
+  ],
+  [
+   "phased",
+   33,
+   0
+  ]
+ ],
+ "kernel": "6.8.0-138-generic",
+ "traced": false,
+ "lost_events": null,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "aarch64"
+}

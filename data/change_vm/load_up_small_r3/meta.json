@@ -1,0 +1,49 @@
+{
+ "name": "load_up_small_r3",
+ "kind": "load_up",
+ "size": "small",
+ "rep": 3,
+ "ncpu": 2,
+ "t0_mono": 1348.456777432,
+ "planned_change_s": 21.132099450387003,
+ "change_mono": 1369.589019023,
+ "change_s": 21.13224159099991,
+ "jobs": [
+  [
+   "cpu",
+   607,
+   0
+  ],
+  [
+   "cpu",
+   608,
+   0
+  ],
+  [
+   "io",
+   609,
+   0
+  ],
+  [
+   "io",
+   610,
+   0
+  ],
+  [
+   "phased",
+   611,
+   0
+  ],
+  [
+   "cpu_extra",
+   613,
+   0
+  ]
+ ],
+ "kernel": "6.18.44-fc-v139",
+ "traced": true,
+ "lost_events": 0,
+ "live_monitor": true,
+ "baseline_cpu": 2,
+ "machine": "x86_64"
+}

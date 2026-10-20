@@ -1,0 +1,7 @@
+pid 543
+kind cpu
+run_ns 32428569349
+wait_ns 7214184583
+timeslices 12015
+voluntary 0
+involuntary 12014

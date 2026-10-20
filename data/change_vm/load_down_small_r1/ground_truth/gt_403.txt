@@ -1,0 +1,7 @@
+pid 403
+kind cpu
+run_ns 10780355892
+wait_ns 8708008296
+timeslices 3604
+voluntary 0
+involuntary 3603

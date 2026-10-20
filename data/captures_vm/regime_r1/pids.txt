@@ -1,0 +1,11 @@
+cpu 1246
+cpu 1247
+cpu 1248
+cpu 1249
+cpu 1251
+cpu 1253
+io 1254
+io 1255
+io 1256
+phased 1257
+phased 1258

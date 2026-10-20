@@ -1,0 +1,7 @@
+pid 503
+kind cpu
+run_ns 8987407500
+wait_ns 11156652085
+timeslices 3208
+voluntary 0
+involuntary 3207

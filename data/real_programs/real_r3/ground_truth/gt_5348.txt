@@ -1,0 +1,7 @@
+pid 5348
+kind client
+run_ns 640261944
+wait_ns 1875222362
+timeslices 4562
+voluntary 4196
+involuntary 366

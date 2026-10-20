@@ -1,0 +1,12 @@
+pid,kind,preempted_by,count
+9562,cpu,kworker,215
+9562,cpu,migration,163
+9563,cpu,migration,167
+9563,cpu,kworker,69
+9564,cpu,kworker,142
+9564,cpu,migration,13
+9565,io,migration,36
+9565,io,kworker,2
+9566,io,migration,17
+9566,io,kworker,4
+9567,io,migration,28

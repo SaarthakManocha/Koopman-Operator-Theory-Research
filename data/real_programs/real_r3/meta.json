@@ -1,0 +1,82 @@
+{
+ "name": "real_r3",
+ "secs": 60.0,
+ "ncpu": 2,
+ "cpus_allowed": [
+  0,
+  1
+ ],
+ "t_start_mono": 3980.381337688,
+ "t_end_mono": 4040.555373204,
+ "lost_events": 0,
+ "tracked": [
+  [
+   "redis",
+   5334
+  ],
+  [
+   "node",
+   5335
+  ],
+  [
+   "sqlite",
+   5349
+  ],
+  [
+   "client",
+   5347
+  ],
+  [
+   "client",
+   5348
+  ],
+  [
+   "ffmpeg",
+   5350
+  ],
+  [
+   "ffmpeg",
+   5360
+  ],
+  [
+   "ffmpeg",
+   5361
+  ],
+  [
+   "ffmpeg",
+   5362
+  ],
+  [
+   "ffmpeg",
+   5363
+  ],
+  [
+   "ffmpeg",
+   5364
+  ],
+  [
+   "ffmpeg",
+   5365
+  ],
+  [
+   "ffmpeg",
+   5366
+  ],
+  [
+   "ffmpeg",
+   5367
+  ],
+  [
+   "ffmpeg",
+   5368
+  ]
+ ],
+ "ground_truth_note": "schedstat read while each thread is alive, last sample before it stopped",
+ "programs": {
+  "redis": "Redis server v=7.0.15 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=e53ff17674aa6190",
+  "node": "v22.22.0",
+  "ffmpeg": "libx264 veryfast 640x360 25 fps -re",
+  "sqlite": "3.45.1"
+ },
+ "jobs": {}
+}

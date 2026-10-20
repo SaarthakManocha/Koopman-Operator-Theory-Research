@@ -1,0 +1,7 @@
+pid 5334
+kind redis
+run_ns 963844458
+wait_ns 1514754125
+timeslices 13826
+voluntary 13385
+involuntary 441
