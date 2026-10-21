@@ -25,6 +25,15 @@
 A.~Silberschatz, P.~B. Galvin, and G.~Gagne, \emph{Operating System Concepts},
   10th~ed.\hskip 1em plus 0.5em minus 0.4em\relax Wiley, 2018.
 
+\bibitem{tanenbaum2015}
+A.~S. Tanenbaum and H.~Bos, \emph{Modern Operating Systems}, 4th~ed.\hskip 1em
+  plus 0.5em minus 0.4em\relax Pearson, 2015.
+
+\bibitem{cfsdoc}
+{The Linux kernel documentation}, ``{CFS} scheduler,''
+  \url{https://docs.kernel.org/scheduler/sched-design-CFS.html}, accessed Oct.
+  2026.
+
 \bibitem{stoica1995}
 I.~Stoica and H.~Abdel-Wahab, ``Earliest eligible virtual deadline first: A
   flexible and accurate mechanism for proportional share resource allocation,''
@@ -75,6 +84,14 @@ H.~Arbabi and I.~Mezi\'c, ``Ergodic theory, dynamic mode decomposition, and
 S.~Pan and K.~Duraisamy, ``On the structure of time-delay embedding in linear
   models of non-linear dynamical systems,'' \emph{Chaos}, vol.~30, no.~7, p.
   073135, 2020.
+
+\bibitem{brown1959}
+R.~G. Brown, \emph{Statistical Forecasting for Inventory Control}.\hskip 1em
+  plus 0.5em minus 0.4em\relax New York: McGraw-Hill, 1959.
+
+\bibitem{roberts1959}
+S.~W. Roberts, ``Control chart tests based on geometric moving averages,''
+  \emph{Technometrics}, vol.~1, no.~3, pp. 239--250, 1959.
 
 \bibitem{tu2014}
 J.~H. Tu, C.~W. Rowley, D.~M. Luchtenburg, S.~L. Brunton, and J.~N. Kutz, ``On
