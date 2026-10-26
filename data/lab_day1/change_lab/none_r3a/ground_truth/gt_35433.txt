@@ -1,0 +1,7 @@
+pid 35433
+kind cpu
+run_ns 40012950632
+wait_ns 788597
+timeslices 180
+voluntary 0
+involuntary 179

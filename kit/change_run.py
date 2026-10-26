@@ -158,6 +158,7 @@ def main():
         for i, r in enumerate(runs):
             print(i, r["name"])
         return
+    a.out = os.path.abspath(a.out)  # workloads run with cwd=workloads/, so GT_DIR must be absolute
     os.makedirs(a.out, exist_ok=True)
     for spec in runs[a.start:a.start + a.count]:
         run_one(spec, a.out, a.trace, a.baseline_cpu)

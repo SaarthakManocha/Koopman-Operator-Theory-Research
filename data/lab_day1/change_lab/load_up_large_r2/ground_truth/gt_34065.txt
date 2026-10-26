@@ -1,0 +1,7 @@
+pid 34065
+kind cpu
+run_ns 15467400539
+wait_ns 4735930383
+timeslices 2189
+voluntary 0
+involuntary 2188

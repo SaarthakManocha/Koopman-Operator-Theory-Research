@@ -1,0 +1,7 @@
+pid 34529
+kind cpu
+run_ns 40012019446
+wait_ns 7700248
+timeslices 86
+voluntary 0
+involuntary 85

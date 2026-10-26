@@ -1,0 +1,17 @@
+cpu 33890
+cpu 33891
+cpu 33892
+cpu 33893
+cpu 33894
+cpu 33895
+cpu 33896
+cpu 33897
+cpu 33898
+cpu 33899
+cpu 33900
+cpu 33901
+cpu 33902
+cpu 33903
+io 33904
+io 33905
+phased 33906

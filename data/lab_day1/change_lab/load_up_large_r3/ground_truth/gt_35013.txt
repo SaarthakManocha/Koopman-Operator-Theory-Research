@@ -1,0 +1,7 @@
+pid 35013
+kind cpu
+run_ns 10465014444
+wait_ns 8140435957
+timeslices 2410
+voluntary 0
+involuntary 2409

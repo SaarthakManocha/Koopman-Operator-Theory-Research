@@ -176,7 +176,7 @@ def one_capture(name, secs, outroot, work, seed):
     rc = subprocess.Popen([PY, os.path.join(work, "redis_client.py"), str(secs), str(seed)])
     hc = subprocess.Popen([PY, os.path.join(work, "http_client.py"), str(secs), str(seed + 1)])
     sq = subprocess.Popen([PY, os.path.join(work, "sqlite_worker.py"), str(secs), str(seed + 2), db])
-    ff = subprocess.Popen(["ffmpeg", "-loglevel", "error", "-re", "-f", "lavfi", "-i",
+    ff = subprocess.Popen(["ffmpeg", "-nostdin", "-loglevel", "error", "-re", "-f", "lavfi", "-i",
                            f"testsrc2=size=640x360:rate=25:duration={secs}", "-c:v", "libx264", "-preset", "veryfast",
                            "-threads", "2", "-f", "null", "-"])
     time.sleep(2.0)
