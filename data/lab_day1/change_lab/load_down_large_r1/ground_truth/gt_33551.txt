@@ -1,0 +1,7 @@
+pid 33551
+kind cpu
+run_ns 36712316489
+wait_ns 3308219424
+timeslices 2028
+voluntary 0
+involuntary 2027

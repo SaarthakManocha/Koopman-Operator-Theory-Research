@@ -1,0 +1,17 @@
+cpu 34781
+cpu 34782
+cpu 34783
+cpu 34784
+cpu 34785
+cpu 34786
+cpu 34787
+cpu 34788
+cpu 34789
+cpu 34790
+cpu 34791
+cpu 34792
+cpu 34793
+cpu 34794
+io 34795
+io 34796
+phased 34797

@@ -1,0 +1,7 @@
+pid 33330
+kind phased
+run_ns 19338535036
+wait_ns 356561
+timeslices 4102
+voluntary 4069
+involuntary 32

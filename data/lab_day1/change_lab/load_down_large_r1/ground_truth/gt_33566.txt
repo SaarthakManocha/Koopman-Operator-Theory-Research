@@ -1,0 +1,7 @@
+pid 33566
+kind cpu
+run_ns 14145369665
+wait_ns 7860460741
+timeslices 2914
+voluntary 0
+involuntary 2913

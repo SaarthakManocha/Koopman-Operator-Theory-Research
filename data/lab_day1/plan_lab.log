@@ -1,0 +1,135 @@
+OK    tracefs mounted, sched tracepoints present
+INFO  kernel 7.0.0-38-generic, 28 CPUs, native/VM
+INFO  running under a hypervisor: False
+INFO  cpufreq available: True
+READY TO CAPTURE
+SELFTEST  a sleeping task was switched out 203 times and in 203 times -> COMPLETE: idle exits are traced
+Plan: 42 captures, about 38 minutes
+
+=== scale_c01_r1: cpus=[0]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=3.5 MB
+
+=== scale_c02_r1: cpus=[0, 1]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=5.7 MB
+
+=== scale_c04_r1: cpus=[0, 1, 2, 3]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=2.8 MB
+
+=== scale_c08_r1: cpus=[0, 1, 2, 3, 4, 5, 6, 7]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=3.9 MB
+
+=== scale_c16_r1: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=4.2 MB
+
+=== scale_c28_r1: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=1.5 MB
+
+=== oversub_r1: cpus=all  cpu=56 io=14 phased=2  30s ===
+    OK: lost events=0, ground-truth files=72/72, exit codes={0}, trace.gz=4.8 MB
+
+=== regime_r1: cpus=all  cpu=28 io=3 phased=2  40s ===
+    OK: lost events=0, ground-truth files=89/89, exit codes={0}, trace.gz=4.4 MB
+
+=== scale_c01_r2: cpus=[0]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=2.3 MB
+
+=== scale_c02_r2: cpus=[0, 1]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=3.6 MB
+
+=== scale_c04_r2: cpus=[0, 1, 2, 3]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=2.2 MB
+
+=== scale_c08_r2: cpus=[0, 1, 2, 3, 4, 5, 6, 7]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=2.4 MB
+
+=== scale_c16_r2: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=5.2 MB
+
+=== scale_c28_r2: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=4.0 MB
+
+=== oversub_r2: cpus=all  cpu=56 io=14 phased=2  30s ===
+    OK: lost events=0, ground-truth files=72/72, exit codes={0}, trace.gz=4.2 MB
+
+=== regime_r2: cpus=all  cpu=28 io=3 phased=2  40s ===
+    OK: lost events=0, ground-truth files=89/89, exit codes={0}, trace.gz=5.4 MB
+
+=== scale_c01_r3: cpus=[0]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=1.7 MB
+
+=== scale_c02_r3: cpus=[0, 1]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=1.5 MB
+
+=== scale_c04_r3: cpus=[0, 1, 2, 3]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=1.5 MB
+
+=== scale_c08_r3: cpus=[0, 1, 2, 3, 4, 5, 6, 7]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=1.5 MB
+
+=== scale_c16_r3: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=1.5 MB
+
+=== scale_c28_r3: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]  cpu=3 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=3.7 MB
+
+=== oversub_r3: cpus=all  cpu=56 io=14 phased=2  30s ===
+    OK: lost events=0, ground-truth files=72/72, exit codes={0}, trace.gz=5.7 MB
+
+=== regime_r3: cpus=all  cpu=28 io=3 phased=2  40s ===
+    OK: lost events=0, ground-truth files=89/89, exit codes={0}, trace.gz=6.4 MB
+
+=== scalebusy_c04_r1: cpus=[0, 1, 2, 3]  cpu=4 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=9/9, exit codes={0}, trace.gz=1.5 MB
+
+=== scalebusy_c08_r1: cpus=[0, 1, 2, 3, 4, 5, 6, 7]  cpu=8 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=13/13, exit codes={0}, trace.gz=3.0 MB
+
+=== scalebusy_c16_r1: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  cpu=16 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=21/21, exit codes={0}, trace.gz=4.9 MB
+
+=== scalebusy_c28_r1: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]  cpu=28 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=33/33, exit codes={0}, trace.gz=3.9 MB
+
+=== freq_default_r1: cpus=all  cpu=3 io=3 phased=2  70s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=6.9 MB
+
+=== freq_performance_r1: cpus=all  cpu=3 io=3 phased=2  70s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=5.4 MB
+
+=== scalebusy_c04_r2: cpus=[0, 1, 2, 3]  cpu=4 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=9/9, exit codes={0}, trace.gz=1.4 MB
+
+=== scalebusy_c08_r2: cpus=[0, 1, 2, 3, 4, 5, 6, 7]  cpu=8 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=13/13, exit codes={0}, trace.gz=1.4 MB
+
+=== scalebusy_c16_r2: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  cpu=16 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=21/21, exit codes={0}, trace.gz=1.5 MB
+
+=== scalebusy_c28_r2: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]  cpu=28 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=33/33, exit codes={0}, trace.gz=2.5 MB
+
+=== freq_default_r2: cpus=all  cpu=3 io=3 phased=2  70s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=5.1 MB
+
+=== freq_performance_r2: cpus=all  cpu=3 io=3 phased=2  70s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=3.8 MB
+
+=== scalebusy_c04_r3: cpus=[0, 1, 2, 3]  cpu=4 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=9/9, exit codes={0}, trace.gz=1.5 MB
+
+=== scalebusy_c08_r3: cpus=[0, 1, 2, 3, 4, 5, 6, 7]  cpu=8 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=13/13, exit codes={0}, trace.gz=1.5 MB
+
+=== scalebusy_c16_r3: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  cpu=16 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=21/21, exit codes={0}, trace.gz=1.5 MB
+
+=== scalebusy_c28_r3: cpus=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]  cpu=28 io=3 phased=2  30s ===
+    OK: lost events=0, ground-truth files=33/33, exit codes={0}, trace.gz=1.6 MB
+
+=== freq_default_r3: cpus=all  cpu=3 io=3 phased=2  70s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=3.4 MB
+
+=== freq_performance_r3: cpus=all  cpu=3 io=3 phased=2  70s ===
+    OK: lost events=0, ground-truth files=8/8, exit codes={0}, trace.gz=3.2 MB
+
+Finished: 42/42 OK
