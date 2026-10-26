@@ -221,8 +221,10 @@ const CAPTURES = [
   { file: "data/oversub_r1.json", hash: "overloaded" },
   { file: "data/regime_r1.json", hash: "load-drop" },
   { file: "data/lab_trace3.json", hash: "lab-28-cores" },
+  { file: "data/scalebusy_c08_r1.json", hash: "lab-8-cores-busy" },
+  { file: "data/scalebusy_c16_r1.json", hash: "lab-16-cores-busy" },
 ];
-const LABELS = ["2 cores, 8 jobs", "1 core, 8 jobs", "2 cores, overloaded", "2 cores, load drops at 20 s", "Lab machine, 28 cores"];
+const LABELS = ["2 cores, 8 jobs", "1 core, 8 jobs", "2 cores, overloaded", "2 cores, load drops at 20 s", "Lab machine, 28 cores", "8 cores, every core busy (bare metal)", "16 cores, every core busy (bare metal)"];
 const css = getComputedStyle(document.documentElement);
 const C = name => css.getPropertyValue(name).trim();
 const COL = { cpu: C("--compute"), io: C("--io"), phased: C("--phased"), other: C("--other") };

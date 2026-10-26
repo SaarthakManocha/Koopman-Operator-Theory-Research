@@ -39,7 +39,14 @@ CHOICES = [
     ("regime_r1", "2 cores, load drops at 20 s",
      "Six CPU-bound jobs for 20 s, then two. The Koopman operator was fitted on the first 8 s; watch its "
      "surprise score when the load changes."),
+    ("scalebusy_c08_r1", "8 cores, every core busy (bare metal)",
+     "Lab machine (Intel Core i7-14700, kernel 7.0): 8 CPU-bound jobs on 8 cores plus 3 I/O-bound and 2 phased jobs. "
+     "Every core holds CPU-bound work, so interactive jobs still queue behind it even with 8 cores."),
+    ("scalebusy_c16_r1", "16 cores, every core busy (bare metal)",
+     "The same on 16 cores with 16 CPU-bound jobs. Twice the cores, yet the phased jobs wait about as long per run "
+     "(1.75 ms): what matters is the order each core picks its tasks, which is what slice requests change."),
 ]
+LAB = os.environ.get("LAB_CAPTURES", "/home/claude/lab1/captures")
 
 
 def ints(a):
@@ -128,9 +135,17 @@ def marks(name, tl, t0):
 def export(name, label, desc):
     tl = pickle.load(open(os.path.join(TL, name + ".pkl"), "rb"))
     mp = os.path.join(ROOT, "data", "captures_vm", name, "meta.json")
+    if name.startswith("scalebusy"):
+        mp = os.path.join(LAB, name, "meta.json")
     tl["meta"] = json.load(open(mp)) if os.path.exists(mp) else {"cpus_allowed": list(range(28))}
     t0, t1 = tl["t0"], tl["t1"]
     run, wait, mig = tl["run"], tl["wait"], tl["migrations"]
+    if name.startswith("scalebusy"):
+        # each job's first time slice runs before it is pinned (process start-up, one slice each, < 10 ms in total);
+        # only the pinned cores are shown
+        allowed = set(tl["meta"]["cpus_allowed"])
+        run, wait = run[run.cpu.isin(allowed)], wait[wait.cpu.isin(allowed)]
+        mig = mig[mig.orig.isin(allowed) & mig.dest.isin(allowed)]
     pids = sorted(run.pid.unique(), key=lambda p: ({"cpu": 0, "phased": 1, "io": 2}.get(run[run.pid == p].kind.iloc[0], 3), p))
     idx = {p: i for i, p in enumerate(pids)}
     kinds = {p: run[run.pid == p].kind.iloc[0] for p in pids}
@@ -173,5 +188,7 @@ def export(name, label, desc):
 
 
 if __name__ == "__main__":
+    only = sys.argv[1:]
     for c in CHOICES:
-        export(*c)
+        if not only or c[0] in only:
+            export(*c)
