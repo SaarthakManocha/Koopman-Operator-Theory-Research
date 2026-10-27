@@ -44,8 +44,8 @@ J.~Corbet, ``An {EEVDF} {CPU} scheduler for {Linux},'' LWN.net, Mar. 2023,
   \url{https://lwn.net/Articles/925371/}.
 
 \bibitem{corbet2024}
-------, ``Completing the {EEVDF} scheduler,'' LWN.net, Apr. 2024,
-  \url{https://lwn.net/Articles/969062/}, 2024.
+J.~Corbet, ``Completing the {EEVDF} scheduler,'' LWN.net, Apr. 2024,
+  \url{https://lwn.net/Articles/969062/}.
 
 \bibitem{eevdfdoc}
 {The Linux kernel documentation}, ``{EEVDF} scheduler,''

@@ -3,7 +3,7 @@
 \newcommand{\K}{\mathbf{K}}
 \graphicspath{{figs/}}
 \title{Steering the Linux Scheduler with Koopman Burst Prediction under EEVDF}
-\author{Saarthak Manocha\\Dept. of Information Technology, Chaitanya Bharathi Institute of Technology, Hyderabad, India\\saarthakmanocha@gmail.com}
+\author{Saarthak Manocha, Prathima Tirumalareddy and A Sirisha\\Chaitanya Bharathi Institute of Technology, Hyderabad, India\\saarthakmanocha@gmail.com, prathimareddy.t@gmail.com, asirishanaidu@gmail.com}
 \date{}
 \begin{document}
 \maketitle
@@ -23,7 +23,7 @@ Koopman operator, Dynamic Mode Decomposition, CPU scheduling, Earliest Eligible 
 %======================================================================
 Shortest Job First (SJF) scheduling minimizes the mean waiting time on one processor, and its preemptive form, Shortest Remaining Time First (SRTF), does the same when jobs arrive over time [1]. Both need something no operating system has: the length of each task's next CPU burst before it runs. Standard operating-systems textbooks therefore teach an estimate of it, the \emph{exponential average} of the previous bursts [1], [2], which Section~II-A explains; this paper calls it the \emph{textbook estimator}. Production schedulers have avoided prediction altogether. The Linux kernel's default scheduler from kernel version 2.6.23 (2007) until kernel version 6.6 was the Completely Fair Scheduler (CFS), which always runs the task that has received the least CPU time so far [3]. In kernel version 6.6 (October 2023) its task-selection logic was replaced by Earliest Eligible Virtual Deadline First (EEVDF) [4], [5], which serves tasks in order of virtual deadlines that depend on how much CPU time they have received and on a time slice, not on how long their next burst will be.
 
-Since kernel version 6.12 (November 2024) the slice is no longer fixed. A task may request its own slice through the \texttt{sched\_setattr} system call, and a shorter slice gives it an earlier virtual deadline and the right to preempt tasks with longer slices [6], [7]. This turns burst prediction from a textbook exercise into a lever on a production scheduler. If a task's next burst is known to be short, its slice can be set short, and EEVDF will serve it sooner; that is SJF expressed inside the stock kernel, with no patch and no new scheduling class. Whether this works depends on two questions that, to the author's knowledge, have not been answered with real kernel data: how well can bursts be predicted, and does a better prediction make the real scheduler faster?
+Since kernel version 6.12 (November 2024) the slice is no longer fixed. A task may request its own slice through the \texttt{sched\_setattr} system call, and a shorter slice gives it an earlier virtual deadline and the right to preempt tasks with longer slices [6], [7]. This turns burst prediction from a textbook exercise into a lever on a production scheduler. If a task's next burst is known to be short, its slice can be set short, and EEVDF will serve it sooner; that is SJF expressed inside the stock kernel, with no patch and no new scheduling class. Whether this works depends on two questions that, to the authors' knowledge, have not been answered with real kernel data: how well can bursts be predicted, and does a better prediction make the real scheduler faster?
 
 This paper studies both with Koopman operator methods [8], [9], [10]. A Koopman operator represents a nonlinear system by a linear operator acting on functions of its state; Dynamic Mode Decomposition (DMD) and Extended Dynamic Mode Decomposition (EDMD) estimate it from data [11], [12], and its eigenvalues describe how patterns in the data decay or oscillate. Burst sequences are short, noisy and nonstationary, which suits a model that is linear in a well-chosen space, can be updated online in nanoseconds, and comes with a spectrum that describes each task. Koopman models on delay coordinates are, however, closely related to autoregressive models [13], [14], so a third question is what the Koopman view adds beyond them.
 
@@ -83,7 +83,7 @@ Extended Berkeley Packet Filter (eBPF) programs run verified code inside the ker
 
 \textbf{Learned and pluggable schedulers.} Reinforcement learning has been used to schedule jobs in data-processing clusters [30]. On a single machine, sched\_ext has made experimental policies easy to deploy [27]; a recent system uses a learned workload classifier to switch between whole sched\_ext policies at run time [31]. The present work instead keeps the stock scheduler and changes only the slice it is asked to use. The Linux scheduler has a history of subtle performance bugs that only careful measurement revealed [32], which motivates the emphasis on validation here.
 
-\textbf{Koopman methods.} Koopman operators have been applied to prediction and control of physical and financial systems [22], [23], [24], [10]. The relation between DMD on delay coordinates and autoregressive models is known [13], [14], and classical time-series practice selects the autoregressive order by information criteria [33], [34]. The author is not aware of Koopman methods applied to operating-system scheduling; this paper tests the method against these classical alternatives rather than assuming an advantage.
+\textbf{Koopman methods.} Koopman operators have been applied to prediction and control of physical and financial systems [22], [23], [24], [10]. The relation between DMD on delay coordinates and autoregressive models is known [13], [14], and classical time-series practice selects the autoregressive order by information criteria [33], [34]. The authors are not aware of Koopman methods applied to operating-system scheduling; this paper tests the method against these classical alternatives rather than assuming an advantage.
 
 %======================================================================
 \section*{IV. Method}
@@ -729,92 +729,92 @@ Capture kit, eBPF observer, controller, sched\_ext policy, parsers, validation, 
 
 \section*{References}
 
-\noindent [1] A. Silberschatz, P. B. Galvin, and G. Gagne, \emph{Operating System Concepts}, 10th ed. Wiley, 2018.
+\noindent{}{[}1{]}~A. Silberschatz, P. B. Galvin, and G. Gagne, \emph{Operating System Concepts}, 10th ed. Wiley, 2018.
 
-\noindent [2] A. S. Tanenbaum and H. Bos, \emph{Modern Operating Systems}, 4th ed. Pearson, 2015.
+\noindent{}{[}2{]}~A. S. Tanenbaum and H. Bos, \emph{Modern Operating Systems}, 4th ed. Pearson, 2015.
 
-\noindent [3] {The Linux kernel documentation}, ``{CFS} scheduler,'' \url{https://docs.kernel.org/scheduler/sched-design-CFS.html}, accessed Oct. 2026.
+\noindent{}{[}3{]}~{The Linux kernel documentation}, ``{CFS} scheduler,'' \url{https://docs.kernel.org/scheduler/sched-design-CFS.html}, accessed Oct. 2026.
 
-\noindent [4] I. Stoica and H. Abdel-Wahab, ``Earliest eligible virtual deadline first: A flexible and accurate mechanism for proportional share resource allocation,'' Old Dominion University, Tech. Rep. TR-95-22, 1995.
+\noindent{}{[}4{]}~I. Stoica and H. Abdel-Wahab, ``Earliest eligible virtual deadline first: A flexible and accurate mechanism for proportional share resource allocation,'' Old Dominion University, Tech. Rep. TR-95-22, 1995.
 
-\noindent [5] J. Corbet, ``An {EEVDF} {CPU} scheduler for {Linux},'' LWN.net, Mar. 2023, \url{https://lwn.net/Articles/925371/}.
+\noindent{}{[}5{]}~J. Corbet, ``An {EEVDF} {CPU} scheduler for {Linux},'' LWN.net, Mar. 2023, \url{https://lwn.net/Articles/925371/}.
 
-\noindent [6] ------, ``Completing the {EEVDF} scheduler,'' LWN.net, Apr. 2024, \url{https://lwn.net/Articles/969062/}, 2024.
+\noindent{}{[}6{]}~J. Corbet, ``Completing the {EEVDF} scheduler,'' LWN.net, Apr. 2024, \url{https://lwn.net/Articles/969062/}.
 
-\noindent [7] {The Linux kernel documentation}, ``{EEVDF} scheduler,'' \url{https://docs.kernel.org/scheduler/sched-eevdf.html}, 2024.
+\noindent{}{[}7{]}~{The Linux kernel documentation}, ``{EEVDF} scheduler,'' \url{https://docs.kernel.org/scheduler/sched-eevdf.html}, 2024.
 
-\noindent [8] B. O. Koopman, ``Hamiltonian systems and transformation in {Hilbert} space,'' \emph{Proc. Natl. Acad. Sci. USA}, vol. 17, no. 5, pp. 315--318, 1931.
+\noindent{}{[}8{]}~B. O. Koopman, ``Hamiltonian systems and transformation in {Hilbert} space,'' \emph{Proc. Natl. Acad. Sci. USA}, vol. 17, no. 5, pp. 315--318, 1931.
 
-\noindent [9] I. Mezi\'c, ``Spectral properties of dynamical systems, model reduction and decompositions,'' \emph{Nonlinear Dyn.}, vol. 41, no. 1--3, pp. 309--325, 2005.
+\noindent{}{[}9{]}~I. Mezi\'c, ``Spectral properties of dynamical systems, model reduction and decompositions,'' \emph{Nonlinear Dyn.}, vol. 41, no. 1--3, pp. 309--325, 2005.
 
-\noindent [10] S. L. Brunton, M. Budi\v{s}i\'c, E. Kaiser, and J. N. Kutz, ``Modern {Koopman} theory for dynamical systems,'' \emph{SIAM Rev.}, vol. 64, no. 2, pp. 229--340, 2022.
+\noindent{}{[}10{]}~S. L. Brunton, M. Budi\v{s}i\'c, E. Kaiser, and J. N. Kutz, ``Modern {Koopman} theory for dynamical systems,'' \emph{SIAM Rev.}, vol. 64, no. 2, pp. 229--340, 2022.
 
-\noindent [11] P. J. Schmid, ``Dynamic mode decomposition of numerical and experimental data,'' \emph{J. Fluid Mech.}, vol. 656, pp. 5--28, 2010.
+\noindent{}{[}11{]}~P. J. Schmid, ``Dynamic mode decomposition of numerical and experimental data,'' \emph{J. Fluid Mech.}, vol. 656, pp. 5--28, 2010.
 
-\noindent [12] M. O. Williams, I. G. Kevrekidis, and C. W. Rowley, ``A data-driven approximation of the {Koopman} operator: Extending dynamic mode decomposition,'' \emph{J. Nonlinear Sci.}, vol. 25, no. 6, pp. 1307--1346, 2015.
+\noindent{}{[}12{]}~M. O. Williams, I. G. Kevrekidis, and C. W. Rowley, ``A data-driven approximation of the {Koopman} operator: Extending dynamic mode decomposition,'' \emph{J. Nonlinear Sci.}, vol. 25, no. 6, pp. 1307--1346, 2015.
 
-\noindent [13] H. Arbabi and I. Mezi\'c, ``Ergodic theory, dynamic mode decomposition, and computation of spectral properties of the {Koopman} operator,'' \emph{SIAM J. Appl. Dyn. Syst.}, vol. 16, no. 4, pp. 2096--2126, 2017.
+\noindent{}{[}13{]}~H. Arbabi and I. Mezi\'c, ``Ergodic theory, dynamic mode decomposition, and computation of spectral properties of the {Koopman} operator,'' \emph{SIAM J. Appl. Dyn. Syst.}, vol. 16, no. 4, pp. 2096--2126, 2017.
 
-\noindent [14] S. Pan and K. Duraisamy, ``On the structure of time-delay embedding in linear models of non-linear dynamical systems,'' \emph{Chaos}, vol. 30, no. 7, p. 073135, 2020.
+\noindent{}{[}14{]}~S. Pan and K. Duraisamy, ``On the structure of time-delay embedding in linear models of non-linear dynamical systems,'' \emph{Chaos}, vol. 30, no. 7, p. 073135, 2020.
 
-\noindent [15] R. G. Brown, \emph{Statistical Forecasting for Inventory Control}. New York: McGraw-Hill, 1959.
+\noindent{}{[}15{]}~R. G. Brown, \emph{Statistical Forecasting for Inventory Control}. New York: McGraw-Hill, 1959.
 
-\noindent [16] S. W. Roberts, ``Control chart tests based on geometric moving averages,'' \emph{Technometrics}, vol. 1, no. 3, pp. 239--250, 1959.
+\noindent{}{[}16{]}~S. W. Roberts, ``Control chart tests based on geometric moving averages,'' \emph{Technometrics}, vol. 1, no. 3, pp. 239--250, 1959.
 
-\noindent [17] J. H. Tu, C. W. Rowley, D. M. Luchtenburg, S. L. Brunton, and J. N. Kutz, ``On dynamic mode decomposition: Theory and applications,'' \emph{J. Comput. Dyn.}, vol. 1, no. 2, pp. 391--421, 2014.
+\noindent{}{[}17{]}~J. H. Tu, C. W. Rowley, D. M. Luchtenburg, S. L. Brunton, and J. N. Kutz, ``On dynamic mode decomposition: Theory and applications,'' \emph{J. Comput. Dyn.}, vol. 1, no. 2, pp. 391--421, 2014.
 
-\noindent [18] M. Korda and I. Mezi\'c, ``On convergence of extended dynamic mode decomposition to the {Koopman} operator,'' \emph{J. Nonlinear Sci.}, vol. 28, no. 2, pp. 687--710, 2018.
+\noindent{}{[}18{]}~M. Korda and I. Mezi\'c, ``On convergence of extended dynamic mode decomposition to the {Koopman} operator,'' \emph{J. Nonlinear Sci.}, vol. 28, no. 2, pp. 687--710, 2018.
 
-\noindent [19] F. Takens, ``Detecting strange attractors in turbulence,'' in \emph{Dynamical Systems and Turbulence, Warwick 1980}, ser. Lecture Notes in Mathematics. Springer, 1981, vol. 898, pp. 366--381.
+\noindent{}{[}19{]}~F. Takens, ``Detecting strange attractors in turbulence,'' in \emph{Dynamical Systems and Turbulence, Warwick 1980}, ser. Lecture Notes in Mathematics. Springer, 1981, vol. 898, pp. 366--381.
 
-\noindent [20] S. L. Brunton, B. W. Brunton, J. L. Proctor, E. Kaiser, and J. N. Kutz, ``Chaos as an intermittently forced linear system,'' \emph{Nature Commun.}, vol. 8, p. 19, 2017.
+\noindent{}{[}20{]}~S. L. Brunton, B. W. Brunton, J. L. Proctor, E. Kaiser, and J. N. Kutz, ``Chaos as an intermittently forced linear system,'' \emph{Nature Commun.}, vol. 8, p. 19, 2017.
 
-\noindent [21] S. T. M. Dawson, M. S. Hemati, M. O. Williams, and C. W. Rowley, ``Characterizing and correcting for the effect of sensor noise in the dynamic mode decomposition,'' \emph{Exp. Fluids}, vol. 57, no. 3, p. 42, 2016.
+\noindent{}{[}21{]}~S. T. M. Dawson, M. S. Hemati, M. O. Williams, and C. W. Rowley, ``Characterizing and correcting for the effect of sensor noise in the dynamic mode decomposition,'' \emph{Exp. Fluids}, vol. 57, no. 3, p. 42, 2016.
 
-\noindent [22] J. N. Kutz, S. L. Brunton, B. W. Brunton, and J. L. Proctor, \emph{Dynamic Mode Decomposition: Data-Driven Modeling of Complex Systems}. Philadelphia, PA: SIAM, 2016.
+\noindent{}{[}22{]}~J. N. Kutz, S. L. Brunton, B. W. Brunton, and J. L. Proctor, \emph{Dynamic Mode Decomposition: Data-Driven Modeling of Complex Systems}. Philadelphia, PA: SIAM, 2016.
 
-\noindent [23] J. Mann and J. N. Kutz, ``Dynamic mode decomposition for financial trading strategies,'' \emph{Quant. Finance}, vol. 16, no. 11, pp. 1643--1655, 2016.
+\noindent{}{[}23{]}~J. Mann and J. N. Kutz, ``Dynamic mode decomposition for financial trading strategies,'' \emph{Quant. Finance}, vol. 16, no. 11, pp. 1643--1655, 2016.
 
-\noindent [24] M. Korda and I. Mezi{\'c}, ``Linear predictors for nonlinear dynamical systems: {Koopman} operator meets model predictive control,'' \emph{Automatica}, vol. 93, pp. 149--160, 2018.
+\noindent{}{[}24{]}~M. Korda and I. Mezi{\'c}, ``Linear predictors for nonlinear dynamical systems: {Koopman} operator meets model predictive control,'' \emph{Automatica}, vol. 93, pp. 149--160, 2018.
 
-\noindent [25] B. Lusch, J. N. Kutz, and S. L. Brunton, ``Deep learning for universal linear embeddings of nonlinear dynamics,'' \emph{Nature Commun.}, vol. 9, p. 4950, 2018.
+\noindent{}{[}25{]}~B. Lusch, J. N. Kutz, and S. L. Brunton, ``Deep learning for universal linear embeddings of nonlinear dynamics,'' \emph{Nature Commun.}, vol. 9, p. 4950, 2018.
 
-\noindent [26] B. Gregg, \emph{{BPF} Performance Tools}. Addison-Wesley, 2019.
+\noindent{}{[}26{]}~B. Gregg, \emph{{BPF} Performance Tools}. Addison-Wesley, 2019.
 
-\noindent [27] {The Linux kernel documentation}, ``Extensible scheduler class (sched\_ext),'' \url{https://docs.kernel.org/scheduler/sched-ext.html}, 2024.
+\noindent{}{[}27{]}~{The Linux kernel documentation}, ``Extensible scheduler class (sched\_ext),'' \url{https://docs.kernel.org/scheduler/sched-ext.html}, 2024.
 
-\noindent [28] A. Negi and P. K. Kumar, ``Applying machine learning techniques to improve {Linux} process scheduling,'' in \emph{Proc. IEEE Region 10 Conf. (TENCON)}, 2005.
+\noindent{}{[}28{]}~A. Negi and P. K. Kumar, ``Applying machine learning techniques to improve {Linux} process scheduling,'' in \emph{Proc. IEEE Region 10 Conf. (TENCON)}, 2005.
 
-\noindent [29] M. Harchol-Balter, B. Schroeder, N. Bansal, and M. Agrawal, ``Size-based scheduling to improve web performance,'' \emph{ACM Trans. Comput. Syst.}, vol. 21, no. 2, pp. 207--233, 2003.
+\noindent{}{[}29{]}~M. Harchol-Balter, B. Schroeder, N. Bansal, and M. Agrawal, ``Size-based scheduling to improve web performance,'' \emph{ACM Trans. Comput. Syst.}, vol. 21, no. 2, pp. 207--233, 2003.
 
-\noindent [30] H. Mao, M. Schwarzkopf, S. B. Venkatakrishnan, Z. Meng, and M. Alizadeh, ``Learning scheduling algorithms for data processing clusters,'' in \emph{Proc. ACM SIGCOMM}, 2019, pp. 270--288.
+\noindent{}{[}30{]}~H. Mao, M. Schwarzkopf, S. B. Venkatakrishnan, Z. Meng, and M. Alizadeh, ``Learning scheduling algorithms for data processing clusters,'' in \emph{Proc. ACM SIGCOMM}, 2019, pp. 270--288.
 
-\noindent [31] X. Wang, S. Jia, J. Cao, Z. Huang, and M. Song, ``Mixture-of-schedulers: An adaptive scheduling agent as a learned router for expert policies,'' arXiv:2511.11628, 2025.
+\noindent{}{[}31{]}~X. Wang, S. Jia, J. Cao, Z. Huang, and M. Song, ``Mixture-of-schedulers: An adaptive scheduling agent as a learned router for expert policies,'' arXiv:2511.11628, 2025.
 
-\noindent [32] J.-P. Lozi, B. Lepers, J. Funston, F. Gaud, V. Qu{\'e}ma, and A. Fedorova, ``The {Linux} scheduler: A decade of wasted cores,'' in \emph{Proc. EuroSys}, 2016.
+\noindent{}{[}32{]}~J.-P. Lozi, B. Lepers, J. Funston, F. Gaud, V. Qu{\'e}ma, and A. Fedorova, ``The {Linux} scheduler: A decade of wasted cores,'' in \emph{Proc. EuroSys}, 2016.
 
-\noindent [33] G. E. P. Box, G. M. Jenkins, G. C. Reinsel, and G. M. Ljung, \emph{Time Series Analysis: Forecasting and Control}, 5th ed. Wiley, 2015.
+\noindent{}{[}33{]}~G. E. P. Box, G. M. Jenkins, G. C. Reinsel, and G. M. Ljung, \emph{Time Series Analysis: Forecasting and Control}, 5th ed. Wiley, 2015.
 
-\noindent [34] H. Akaike, ``A new look at the statistical model identification,'' \emph{IEEE Trans. Autom. Control}, vol. 19, no. 6, pp. 716--723, 1974.
+\noindent{}{[}34{]}~H. Akaike, ``A new look at the statistical model identification,'' \emph{IEEE Trans. Autom. Control}, vol. 19, no. 6, pp. 716--723, 1974.
 
-\noindent [35] V. Vovk, A. Gammerman, and G. Shafer, \emph{Algorithmic Learning in a Random World}. New York: Springer, 2005.
+\noindent{}{[}35{]}~V. Vovk, A. Gammerman, and G. Shafer, \emph{Algorithmic Learning in a Random World}. New York: Springer, 2005.
 
-\noindent [36] A. N. Angelopoulos and S. Bates, ``Conformal prediction: A gentle introduction,'' \emph{Found. Trends Mach. Learn.}, vol. 16, no. 4, pp. 494--591, 2023.
+\noindent{}{[}36{]}~A. N. Angelopoulos and S. Bates, ``Conformal prediction: A gentle introduction,'' \emph{Found. Trends Mach. Learn.}, vol. 16, no. 4, pp. 494--591, 2023.
 
-\noindent [37] H. R. K\"unsch, ``The jackknife and the bootstrap for general stationary observations,'' \emph{Ann. Statist.}, vol. 17, no. 3, pp. 1217--1241, 1989.
+\noindent{}{[}37{]}~H. R. K\"unsch, ``The jackknife and the bootstrap for general stationary observations,'' \emph{Ann. Statist.}, vol. 17, no. 3, pp. 1217--1241, 1989.
 
-\noindent [38] S. Holm, ``A simple sequentially rejective multiple test procedure,'' \emph{Scand. J. Statist.}, vol. 6, no. 2, pp. 65--70, 1979.
+\noindent{}{[}38{]}~S. Holm, ``A simple sequentially rejective multiple test procedure,'' \emph{Scand. J. Statist.}, vol. 6, no. 2, pp. 65--70, 1979.
 
-\noindent [39] F. Wilcoxon, ``Individual comparisons by ranking methods,'' \emph{Biometrics Bull.}, vol. 1, no. 6, pp. 80--83, 1945.
+\noindent{}{[}39{]}~F. Wilcoxon, ``Individual comparisons by ranking methods,'' \emph{Biometrics Bull.}, vol. 1, no. 6, pp. 80--83, 1945.
 
-\noindent [40] S. Manocha, R. R. Lingala, C. S. M. Sadhana, S. Kedia, C. S. M. Sahithi, and P. Vemuri, ``{Koopman} operator theory for network traffic dynamics: An inspectable linear world model for attack forecasting,'' 2026, manuscript, Chaitanya Bharathi Institute of Technology.
+\noindent{}{[}40{]}~S. Manocha, R. R. Lingala, C. S. M. Sadhana, S. Kedia, C. S. M. Sahithi, and P. Vemuri, ``{Koopman} operator theory for network traffic dynamics: An inspectable linear world model for attack forecasting,'' 2026, manuscript, Chaitanya Bharathi Institute of Technology.
 
-\noindent [41] I. Sharafaldin, A. H. Lashkari, and A. A. Ghorbani, ``Toward generating a new intrusion detection dataset and intrusion traffic characterization,'' in \emph{Proc. 4th Int. Conf. Inf. Syst. Security Privacy (ICISSP)}, 2018, pp. 108--116.
+\noindent{}{[}41{]}~I. Sharafaldin, A. H. Lashkari, and A. A. Ghorbani, ``Toward generating a new intrusion detection dataset and intrusion traffic characterization,'' in \emph{Proc. 4th Int. Conf. Inf. Syst. Security Privacy (ICISSP)}, 2018, pp. 108--116.
 
-\noindent [42] N. Moustafa and J. Slay, ``{UNSW-NB15}: A comprehensive data set for network intrusion detection systems,'' in \emph{Proc. Military Commun. Inf. Syst. Conf. (MilCIS)}, 2015, pp. 1--6.
+\noindent{}{[}42{]}~N. Moustafa and J. Slay, ``{UNSW-NB15}: A comprehensive data set for network intrusion detection systems,'' in \emph{Proc. Military Commun. Inf. Syst. Conf. (MilCIS)}, 2015, pp. 1--6.
 
-\noindent [43] S. Manocha, ``{EIGENWORLD}: Causal-topological intelligence for complex systems,'' Source code, \url{https://github.com/SaarthakManocha/eigenworld}, 2026.
+\noindent{}{[}43{]}~S. Manocha, ``{EIGENWORLD}: Causal-topological intelligence for complex systems,'' Source code, \url{https://github.com/SaarthakManocha/eigenworld}, 2026.
 
-\noindent [44] R. R. Coifman and S. Lafon, ``Diffusion maps,'' \emph{Appl. Comput. Harmon. Anal.}, vol. 21, no. 1, pp. 5--30, 2006.
+\noindent{}{[}44{]}~R. R. Coifman and S. Lafon, ``Diffusion maps,'' \emph{Appl. Comput. Harmon. Anal.}, vol. 21, no. 1, pp. 5--30, 2006.
 
 \end{document}

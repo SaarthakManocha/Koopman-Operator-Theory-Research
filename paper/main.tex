@@ -17,14 +17,22 @@
 
 
 \begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
 
 \title{Steering the Linux Scheduler with\\ Koopman Burst Prediction under EEVDF}
 
 \author{\IEEEauthorblockN{Saarthak Manocha}
 \IEEEauthorblockA{Dept. of Information Technology\\
-Chaitanya Bharathi Institute of Technology\\
-Hyderabad, India\\
-saarthakmanocha@gmail.com}}
+Chaitanya Bharathi Institute\\ of Technology, Hyderabad, India\\
+saarthakmanocha@gmail.com}
+\and
+\IEEEauthorblockN{Prathima Tirumalareddy}
+\IEEEauthorblockA{Chaitanya Bharathi Institute\\ of Technology, Hyderabad, India\\
+prathimareddy.t@gmail.com}
+\and
+\IEEEauthorblockN{A Sirisha}
+\IEEEauthorblockA{Chaitanya Bharathi Institute\\ of Technology, Hyderabad, India\\
+asirishanaidu@gmail.com}}
 
 \maketitle
 
@@ -42,7 +50,7 @@ Koopman operator, Dynamic Mode Decomposition, CPU scheduling, Earliest Eligible 
 %======================================================================
 Shortest Job First (SJF) scheduling minimizes the mean waiting time on one processor, and its preemptive form, Shortest Remaining Time First (SRTF), does the same when jobs arrive over time~\cite{silberschatz2018}. Both need something no operating system has: the length of each task's next CPU burst before it runs. Standard operating-systems textbooks therefore teach an estimate of it, the \emph{exponential average} of the previous bursts~\cite{silberschatz2018,tanenbaum2015}, which Section~\ref{sec:textbook} explains; this paper calls it the \emph{textbook estimator}. Production schedulers have avoided prediction altogether. The Linux kernel's default scheduler from kernel version 2.6.23 (2007) until kernel version 6.6 was the Completely Fair Scheduler (CFS), which always runs the task that has received the least CPU time so far~\cite{cfsdoc}. In kernel version 6.6 (October 2023) its task-selection logic was replaced by Earliest Eligible Virtual Deadline First (EEVDF)~\cite{stoica1995,corbet2023eevdf}, which serves tasks in order of virtual deadlines that depend on how much CPU time they have received and on a time slice, not on how long their next burst will be.
 
-Since kernel version 6.12 (November 2024) the slice is no longer fixed. A task may request its own slice through the \texttt{sched\_setattr} system call, and a shorter slice gives it an earlier virtual deadline and the right to preempt tasks with longer slices~\cite{corbet2024,eevdfdoc}. This turns burst prediction from a textbook exercise into a lever on a production scheduler. If a task's next burst is known to be short, its slice can be set short, and EEVDF will serve it sooner; that is SJF expressed inside the stock kernel, with no patch and no new scheduling class. Whether this works depends on two questions that, to the author's knowledge, have not been answered with real kernel data: how well can bursts be predicted, and does a better prediction make the real scheduler faster?
+Since kernel version 6.12 (November 2024) the slice is no longer fixed. A task may request its own slice through the \texttt{sched\_setattr} system call, and a shorter slice gives it an earlier virtual deadline and the right to preempt tasks with longer slices~\cite{corbet2024,eevdfdoc}. This turns burst prediction from a textbook exercise into a lever on a production scheduler. If a task's next burst is known to be short, its slice can be set short, and EEVDF will serve it sooner; that is SJF expressed inside the stock kernel, with no patch and no new scheduling class. Whether this works depends on two questions that, to the authors' knowledge, have not been answered with real kernel data: how well can bursts be predicted, and does a better prediction make the real scheduler faster?
 
 This paper studies both with Koopman operator methods~\cite{koopman1931,mezic2005,brunton2022}. A Koopman operator represents a nonlinear system by a linear operator acting on functions of its state; Dynamic Mode Decomposition (DMD) and Extended Dynamic Mode Decomposition (EDMD) estimate it from data~\cite{schmid2010,williams2015}, and its eigenvalues describe how patterns in the data decay or oscillate. Burst sequences are short, noisy and nonstationary, which suits a model that is linear in a well-chosen space, can be updated online in nanoseconds, and comes with a spectrum that describes each task. Koopman models on delay coordinates are, however, closely related to autoregressive models~\cite{arbabi2017,pan2020}, so a third question is what the Koopman view adds beyond them.
 
@@ -102,7 +110,7 @@ Extended Berkeley Packet Filter (eBPF) programs run verified code inside the ker
 
 \textbf{Learned and pluggable schedulers.} Reinforcement learning has been used to schedule jobs in data-processing clusters~\cite{mao2019decima}. On a single machine, sched\_ext has made experimental policies easy to deploy~\cite{schedext}; a recent system uses a learned workload classifier to switch between whole sched\_ext policies at run time~\cite{wang2025mos}. The present work instead keeps the stock scheduler and changes only the slice it is asked to use. The Linux scheduler has a history of subtle performance bugs that only careful measurement revealed~\cite{lozi2016}, which motivates the emphasis on validation here.
 
-\textbf{Koopman methods.} Koopman operators have been applied to prediction and control of physical and financial systems~\cite{kutz2016,mann2016,kordampc2018,brunton2022}. The relation between DMD on delay coordinates and autoregressive models is known~\cite{arbabi2017,pan2020}, and classical time-series practice selects the autoregressive order by information criteria~\cite{box2015,akaike1974}. The author is not aware of Koopman methods applied to operating-system scheduling; this paper tests the method against these classical alternatives rather than assuming an advantage.
+\textbf{Koopman methods.} Koopman operators have been applied to prediction and control of physical and financial systems~\cite{kutz2016,mann2016,kordampc2018,brunton2022}. The relation between DMD on delay coordinates and autoregressive models is known~\cite{arbabi2017,pan2020}, and classical time-series practice selects the autoregressive order by information criteria~\cite{box2015,akaike1974}. The authors are not aware of Koopman methods applied to operating-system scheduling; this paper tests the method against these classical alternatives rather than assuming an advantage.
 
 %======================================================================
 \section{Method}\label{sec:method}

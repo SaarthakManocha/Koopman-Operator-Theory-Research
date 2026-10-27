@@ -18,6 +18,12 @@ for p in d.paragraphs:
     if p.text.startswith("TABLE "):
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         for r in p.runs: r.font.size = Pt(9.5)
+import re
+inrefs = False
+for p in d.paragraphs:
+    if p.text.strip() == "References": inrefs = True; continue
+    if inrefs and re.match(r"^\d+\]", p.text) and p.runs:
+        p.runs[0].text = "[" + p.runs[0].text
 for t in d.tables:
     tblPr = t._tbl.tblPr
     for old in tblPr.findall(qn('w:tblBorders')): tblPr.remove(old)

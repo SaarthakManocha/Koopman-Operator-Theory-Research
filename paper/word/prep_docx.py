@@ -55,14 +55,14 @@ for k, txt in zip(items[0::2], items[1::2]):
     txt = re.sub(r"\\hskip[^\\]*\\relax", " ", txt)
     txt = re.sub(r"\\BIBentry(ALT|STD)interwordspacing", "", txt)
     txt = txt.replace(r"\newblock", "").replace("~", " ")
-    refs.append(rf"[{cites[k]}] " + " ".join(txt.split()))
-bib = "\n\\section{References}\n\n" + "\n\n".join(r"\noindent " + r for r in refs) + "\n"
+    refs.append("{[}" + cites[k] + "{]}~" + " ".join(txt.split()))
+bib = "\n\\section{References}\n\n" + "\n\n".join(r"\noindent{}" + r for r in refs) + "\n"
 head = r"""\documentclass{article}
 \usepackage{amsmath,amssymb,graphicx,booktabs,url,hyperref}
 \newcommand{\K}{\mathbf{K}}
 \graphicspath{{figs/}}
 \title{Steering the Linux Scheduler with Koopman Burst Prediction under EEVDF}
-\author{Saarthak Manocha\\Dept. of Information Technology, Chaitanya Bharathi Institute of Technology, Hyderabad, India\\saarthakmanocha@gmail.com}
+\author{Saarthak Manocha, Prathima Tirumalareddy and A Sirisha\\Chaitanya Bharathi Institute of Technology, Hyderabad, India\\saarthakmanocha@gmail.com, prathimareddy.t@gmail.com, asirishanaidu@gmail.com}
 \date{}
 \begin{document}
 \maketitle
