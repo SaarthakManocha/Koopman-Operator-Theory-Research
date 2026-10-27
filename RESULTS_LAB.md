@@ -13,3 +13,13 @@ Raw captures (518 MB) are kept outside the repository; `data/lab_day1/` holds th
 | Live change detection, 24 runs | Koopman residual 8/18 (large changes 7/9, 0.04 s), run-queue/utilization monitors 14/18 | src/change_detection.py (mac_runs loader) |
 
 Not yet run on bare metal: real-program captures (ffmpeg -nostdin fix applied), real-server steering, scx_koopman.
+
+# Bare-metal results, lab day 2 (27 Oct 2026)
+
+Machine: Intel Core i7-7700 (4 cores x 2 threads, 8 CPUs), Ubuntu 24.04, kernel 7.0.0-38, sched_ext available. Self-test 201/201.
+
+| Experiment | Result | Script |
+| --- | --- | --- |
+| Real servers, 1 CPU + 3 hogs, 60 runs | log-EDMD c=1.5: Redis -43%, SQLite point -77%, Node.js light -34% (10/10 pairs each); EWMA -48/-23/-34%; Redis p99 +21% and SQLite range +32% with log-EDMD | closedloop/analyse_real_closed.py, closedloop/plot_real_baremetal.py |
+| Real-program captures, 3 x 60 s | threads >= 0.5 s CPU within 3.1% of kernel (median 0.33%), 0 lost events; log-EDMD beats EWMA in 24/30 threads (median ratio 0.81); Redis 0.55, SQLite 0.56 | src/real_programs_analysis.py |
+| sched_ext scx_koopman, 8 CPUs, 36 runs | log-EDMD margin 1.5: short -44%, long -41%, all -41% vs stock EEVDF; no-prediction baseline 14x worse; 30/30 clean load/unload | closedloop/analyse_closedloop.py |

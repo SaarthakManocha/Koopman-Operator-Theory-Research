@@ -1,9 +1,17 @@
 # scx_koopman: a Koopman-predicting scheduler for sched_ext
 
-Status: the BPF program compiles (checked against a kernel 7.3 `vmlinux.h`); it has
-**not been run**, because the machine it was written on has no sched_ext. Run it first
-on the lab machine, as below. If anything goes wrong, the kernel unloads it and returns
-to EEVDF on its own (sched_ext watchdog), and Ctrl-C always restores EEVDF.
+Status: run on bare metal (Intel Core i7-7700, Ubuntu 24.04, kernel 7.0) on 27 Oct 2026: loaded and
+unloaded cleanly in 30 of 30 runs; results in the paper (Section VII-G). If anything goes wrong, the kernel
+unloads it and returns to EEVDF on its own (sched_ext watchdog), and Ctrl-C always restores EEVDF.
+
+Needs libbpf >= 1.5. Ubuntu 24.04 ships 1.3, and `make` then fails with
+"'struct bpf_map_skeleton' has no member named 'link'". Build libbpf 1.5 in your home folder and link it:
+
+    git clone --depth 1 -b v1.5.0 https://github.com/libbpf/libbpf ~/libbpf15
+    make -C ~/libbpf15/src -j8 BUILD_STATIC_ONLY=y OBJDIR=$HOME/libbpf15/obj DESTDIR=$HOME/libbpf15/inst install
+    make build/scx_koopman.bpf.skel.h
+    gcc -O2 -I$HOME/libbpf15/inst/usr/include -Ibuild -Iinclude -o build/scx_koopman scx_koopman.c \
+        $(find ~/libbpf15/inst -name libbpf.a) -lelf -lz -lm
 
 What it does: a global virtual-time scheduler (like the kernel's `scx_simple`) that
 orders runnable tasks by `virtual time + predicted next burst` and gives each a slice

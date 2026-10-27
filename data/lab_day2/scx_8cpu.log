@@ -1,0 +1,96 @@
+scx_koopman running: predictor=koopman margin=100%
+EXIT: unregistered from user space
+rep 0 scx_koopman_100 23.2s
+scx_koopman running: predictor=ewma margin=150%
+EXIT: unregistered from user space
+rep 0 scx_ewma_150 23.2s
+scx_koopman running: predictor=none margin=150%
+EXIT: unregistered from user space
+rep 0 scx_none_150 23.2s
+rep 0 stock    20.1s
+scx_koopman running: predictor=koopman margin=200%
+EXIT: unregistered from user space
+rep 0 scx_koopman_200 23.4s
+scx_koopman running: predictor=koopman margin=150%
+EXIT: unregistered from user space
+rep 0 scx_koopman_150 23.2s
+scx_koopman running: predictor=ewma margin=150%
+EXIT: unregistered from user space
+rep 1 scx_ewma_150 23.2s
+scx_koopman running: predictor=koopman margin=150%
+EXIT: unregistered from user space
+rep 1 scx_koopman_150 23.2s
+scx_koopman running: predictor=koopman margin=200%
+EXIT: unregistered from user space
+rep 1 scx_koopman_200 23.1s
+rep 1 stock    20.1s
+scx_koopman running: predictor=koopman margin=100%
+EXIT: unregistered from user space
+rep 1 scx_koopman_100 23.1s
+scx_koopman running: predictor=none margin=150%
+EXIT: unregistered from user space
+rep 1 scx_none_150 23.1s
+scx_koopman running: predictor=ewma margin=150%
+EXIT: unregistered from user space
+rep 2 scx_ewma_150 23.2s
+scx_koopman running: predictor=koopman margin=150%
+EXIT: unregistered from user space
+rep 2 scx_koopman_150 23.2s
+scx_koopman running: predictor=none margin=150%
+EXIT: unregistered from user space
+rep 2 scx_none_150 23.1s
+scx_koopman running: predictor=koopman margin=100%
+EXIT: unregistered from user space
+rep 2 scx_koopman_100 23.2s
+scx_koopman running: predictor=koopman margin=200%
+EXIT: unregistered from user space
+rep 2 scx_koopman_200 23.1s
+rep 2 stock    20.1s
+rep 3 stock    20.1s
+scx_koopman running: predictor=ewma margin=150%
+EXIT: unregistered from user space
+rep 3 scx_ewma_150 23.1s
+scx_koopman running: predictor=koopman margin=150%
+EXIT: unregistered from user space
+rep 3 scx_koopman_150 23.2s
+scx_koopman running: predictor=koopman margin=200%
+EXIT: unregistered from user space
+rep 3 scx_koopman_200 23.2s
+scx_koopman running: predictor=koopman margin=100%
+EXIT: unregistered from user space
+rep 3 scx_koopman_100 23.1s
+scx_koopman running: predictor=none margin=150%
+EXIT: unregistered from user space
+rep 3 scx_none_150 23.1s
+scx_koopman running: predictor=koopman margin=150%
+EXIT: unregistered from user space
+rep 4 scx_koopman_150 23.2s
+scx_koopman running: predictor=koopman margin=200%
+EXIT: unregistered from user space
+rep 4 scx_koopman_200 23.2s
+scx_koopman running: predictor=koopman margin=100%
+EXIT: unregistered from user space
+rep 4 scx_koopman_100 23.2s
+rep 4 stock    20.1s
+scx_koopman running: predictor=ewma margin=150%
+EXIT: unregistered from user space
+rep 4 scx_ewma_150 23.2s
+scx_koopman running: predictor=none margin=150%
+EXIT: unregistered from user space
+rep 4 scx_none_150 23.1s
+scx_koopman running: predictor=none margin=150%
+EXIT: unregistered from user space
+rep 5 scx_none_150 23.1s
+rep 5 stock    20.1s
+scx_koopman running: predictor=koopman margin=150%
+EXIT: unregistered from user space
+rep 5 scx_koopman_150 23.3s
+scx_koopman running: predictor=koopman margin=200%
+EXIT: unregistered from user space
+rep 5 scx_koopman_200 23.2s
+scx_koopman running: predictor=ewma margin=150%
+EXIT: unregistered from user space
+rep 5 scx_ewma_150 23.2s
+scx_koopman running: predictor=koopman margin=100%
+EXIT: unregistered from user space
+rep 5 scx_koopman_100 23.1s

@@ -1,0 +1,59 @@
+VALIDATION (48 threads, 3 captures, lost events [0])
+  CPU time  |err| median 3.10%  max 390.62%
+  wait time |err| median 4.87%  max 1129.06%
+  orphan switch-outs total 0
+
+BURST PREDICTION, ratio of MAE to textbook EWMA (<1 = better), threads with >= 60 bursts
+  Log EDMD one-step    client  n= 6 median ratio 0.712  better in 6/6  (sign test p=0.0312)  CI-excludes-1-and-better: 6
+  Log EDMD one-step    ffmpeg  n=15 median ratio 0.944  better in 9/15  (sign test p=0.607)  CI-excludes-1-and-better: 8
+  Log EDMD one-step    node    n= 3 median ratio 0.811  better in 3/3  (sign test p=0.25)  CI-excludes-1-and-better: 3
+  Log EDMD one-step    redis   n= 3 median ratio 0.553  better in 3/3  (sign test p=0.25)  CI-excludes-1-and-better: 3
+  Log EDMD one-step    sqlite  n= 3 median ratio 0.556  better in 3/3  (sign test p=0.25)  CI-excludes-1-and-better: 3
+  Log EDMD one-step    ALL     n=30 median ratio 0.806  better in 24/30 (p=0.00143)
+  EDMD one-step        client  n= 6 median ratio 0.847  better in 6/6  (sign test p=0.0312)  CI-excludes-1-and-better: 5
+  EDMD one-step        ffmpeg  n=15 median ratio 0.936  better in 9/15  (sign test p=0.607)  CI-excludes-1-and-better: 9
+  EDMD one-step        node    n= 3 median ratio 0.927  better in 2/3  (sign test p=1)  CI-excludes-1-and-better: 2
+  EDMD one-step        redis   n= 3 median ratio 0.807  better in 2/3  (sign test p=1)  CI-excludes-1-and-better: 2
+  EDMD one-step        sqlite  n= 3 median ratio 0.890  better in 2/3  (sign test p=1)  CI-excludes-1-and-better: 1
+  EDMD one-step        ALL     n=30 median ratio 0.920  better in 21/30 (p=0.0428)
+  Poly EDMD one-step   client  n= 6 median ratio 0.820  better in 6/6  (sign test p=0.0312)  CI-excludes-1-and-better: 6
+  Poly EDMD one-step   ffmpeg  n=15 median ratio 0.913  better in 10/15  (sign test p=0.302)  CI-excludes-1-and-better: 10
+  Poly EDMD one-step   node    n= 3 median ratio 0.901  better in 3/3  (sign test p=0.25)  CI-excludes-1-and-better: 2
+  Poly EDMD one-step   redis   n= 3 median ratio 0.824  better in 2/3  (sign test p=1)  CI-excludes-1-and-better: 1
+  Poly EDMD one-step   sqlite  n= 3 median ratio 0.802  better in 3/3  (sign test p=0.25)  CI-excludes-1-and-better: 2
+  Poly EDMD one-step   ALL     n=30 median ratio 0.879  better in 24/30 (p=0.00143)
+  EWMA tuned           client  n= 6 median ratio 1.061  better in 3/6  (sign test p=1)  CI-excludes-1-and-better: 3
+  EWMA tuned           ffmpeg  n=15 median ratio 0.978  better in 12/15  (sign test p=0.0352)  CI-excludes-1-and-better: 5
+  EWMA tuned           node    n= 3 median ratio 0.894  better in 3/3  (sign test p=0.25)  CI-excludes-1-and-better: 3
+  EWMA tuned           redis   n= 3 median ratio 0.943  better in 3/3  (sign test p=0.25)  CI-excludes-1-and-better: 0
+  EWMA tuned           sqlite  n= 3 median ratio 0.998  better in 2/3  (sign test p=1)  CI-excludes-1-and-better: 0
+  EWMA tuned           ALL     n=30 median ratio 0.978  better in 23/30 (p=0.00522)
+  Gradient boosting    client  n= 6 median ratio 0.789  better in 6/6  (sign test p=0.0312)  CI-excludes-1-and-better: 6
+  Gradient boosting    ffmpeg  n=15 median ratio 0.895  better in 10/15  (sign test p=0.302)  CI-excludes-1-and-better: 10
+  Gradient boosting    node    n= 3 median ratio 0.805  better in 3/3  (sign test p=0.25)  CI-excludes-1-and-better: 3
+  Gradient boosting    redis   n= 3 median ratio 0.842  better in 2/3  (sign test p=1)  CI-excludes-1-and-better: 0
+  Gradient boosting    sqlite  n= 3 median ratio 0.794  better in 2/3  (sign test p=1)  CI-excludes-1-and-better: 2
+  Gradient boosting    ALL     n=30 median ratio 0.827  better in 23/30 (p=0.00522)
+  Last value           client  n= 6 median ratio 1.178  better in 0/6  (sign test p=0.0312)  CI-excludes-1-and-better: 0
+  Last value           ffmpeg  n=15 median ratio 1.134  better in 0/15  (sign test p=6.1e-05)  CI-excludes-1-and-better: 0
+  Last value           node    n= 3 median ratio 1.182  better in 0/3  (sign test p=0.25)  CI-excludes-1-and-better: 0
+  Last value           redis   n= 3 median ratio 1.033  better in 0/3  (sign test p=0.25)  CI-excludes-1-and-better: 0
+  Last value           sqlite  n= 3 median ratio 1.031  better in 0/3  (sign test p=0.25)  CI-excludes-1-and-better: 0
+  Last value           ALL     n=30 median ratio 1.164  better in 0/30 (p=1.86e-09)
+
+SPECTRAL FINGERPRINT: 1163 windows of 150 bursts, classes {'client': 518, 'redis': 239, 'ffmpeg': 180, 'sqlite': 122, 'node': 104}
+  eigenvalues only       balanced accuracy 0.767  (chance 0.200)
+  burst statistics only  balanced accuracy 0.992  (chance 0.200)
+  both                   balanced accuracy 0.985  (chance 0.200)
+  confusion (eigenvalues only), rows = true: ['client', 'ffmpeg', 'node', 'redis', 'sqlite']
+    client  [484, 10, 2, 1, 21]
+    ffmpeg  [9, 116, 6, 29, 20]
+    node    [0, 7, 69, 27, 1]
+    redis   [1, 16, 33, 189, 0]
+    sqlite  [4, 19, 0, 1, 98]
+  median spectral radius |lambda1| and largest |Im lambda| per program:
+    client  0.857  0.364
+    ffmpeg  0.723  0.252
+    node    0.494  0.452
+    redis   0.397  0.315
+    sqlite  0.728  0.000

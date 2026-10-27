@@ -15,12 +15,6 @@
 \newcommand{\K}{\mathbf{K}}
 \graphicspath{{figs/}}
 
-% Numbers that will be confirmed or replaced by the bare-metal laboratory runs
-\definecolor{pendblue}{RGB}{0,84,200}
-\newcommand{\pend}[1]{\textcolor{pendblue}{#1}}
-\newcommand{\pending}[1]{\textcolor{pendblue}{\textbf{[Pending:} #1\textbf{]}}}
-\newcolumntype{B}{>{\color{pendblue}}c}
-\newcommand{\hd}[1]{\textcolor{black}{#1}}
 
 \begin{document}
 
@@ -35,14 +29,13 @@ saarthakmanocha@gmail.com}}
 \maketitle
 
 \begin{abstract}
-Shortest Job First (SJF) scheduling needs the length of each task's next Central Processing Unit (CPU) burst before the burst runs. This paper predicts bursts with a Koopman operator, fitted by Dynamic Mode Decomposition (DMD) on log-scale delay coordinates, and feeds the predictions to the unmodified Linux Earliest Eligible Virtual Deadline First (EEVDF) scheduler as per-task slice requests. Every measurement is validated against the kernel's own accounting, on a virtual machine (CPU time within 0.93\%, 105 processes) and on a 28-CPU bare-metal machine (within 0.44\% for every process with at least 0.5\,s of CPU time, 903 processes, no lost events). On real programs (Redis, SQLite, Node.js, ffmpeg) the predictor beats the textbook exponential average in 32 of 36 threads, with 29\% lower error. The predictor is shown to be numerically a log-scale autoregressive model, and neither nonlinear observables, an Autoregressive Integrated Moving Average (ARIMA) model nor a neural network beats that model. In closed loop on bare metal with 1, 8 and 16 CPUs, an Extended Berkeley Packet Filter (eBPF) observer that costs at most 1.4\% of one core feeds the predictor, and predicted slices cut the response time of short requests by 57--59\% with no loss of throughput; the Koopman predictor beats the exponential average in 48 of 54 paired runs. Slices need a margin above the predicted burst: a slice exactly equal to the true burst gives only 8--9\%, while 1.5 times the burst gives 72\%. On a two-core virtual machine with real servers sharing a core with CPU-bound tasks, Redis requests became \pend{31--37\%} faster and SQLite point queries \pend{31\%} faster, with tail latency unchanged. The capture kit, data, controller, a sched\_ext policy for bare-metal tests and a scheduler visualizer are released.
+Shortest Job First (SJF) scheduling needs the length of each task's next Central Processing Unit (CPU) burst before the burst runs. This paper predicts bursts with a Koopman operator, fitted by Dynamic Mode Decomposition (DMD) on log-scale delay coordinates, and feeds the predictions to the unmodified Linux Earliest Eligible Virtual Deadline First (EEVDF) scheduler as per-task slice requests. Every measurement is validated against the kernel's own accounting, on a virtual machine (CPU time within 0.93\%, 105 processes) and on a 28-CPU bare-metal machine (within 0.44\% for every process with at least 0.5\,s of CPU time, 903 processes, no lost events). On real programs (Redis, SQLite, Node.js, ffmpeg) the predictor beats the textbook exponential average in 32 of 36 threads, with 29\% lower error. The predictor is shown to be numerically a log-scale autoregressive model, and neither nonlinear observables, an Autoregressive Integrated Moving Average (ARIMA) model nor a neural network beats that model. In closed loop on bare metal with 1, 8 and 16 CPUs, an Extended Berkeley Packet Filter (eBPF) observer that costs at most 1.4\% of one core feeds the predictor, and predicted slices cut the response time of short requests by 57--59\% with no loss of throughput; the Koopman predictor beats the exponential average in 48 of 54 paired runs. Slices need a margin above the predicted burst: a slice exactly equal to the true burst gives only 8--9\%, while 1.5 times the burst gives 72\%. With real servers sharing a core with CPU-bound tasks on a second bare-metal machine, Redis requests became 43\% faster, SQLite point queries 77\% and Node.js light requests 34\%, although Redis's 99th-percentile latency rose by 21\%. A complete sched\_ext scheduler built on the same predictor cut the response time of short requests by 44\% and of long requests by 41\% against stock Linux. The capture kit, data, controller, sched\_ext scheduler and a scheduler visualizer are released.
 \end{abstract}
 
 \begin{IEEEkeywords}
 Koopman operator, Dynamic Mode Decomposition, CPU scheduling, Earliest Eligible Virtual Deadline First, Shortest Job First, Extended Berkeley Packet Filter, kernel tracing, conformal prediction
 \end{IEEEkeywords}
 
-\noindent\textcolor{pendblue}{\textbf{Note on this draft.} The bare-metal runs for the closed loop (1, 8 and 16 CPUs), scaling, CPU frequency and live change detection are complete and their numbers are final. Numbers in blue (the real-server experiment) come from a two-core virtual machine and will be confirmed or replaced by a bare-metal run; items marked [Pending] will be filled in from the remaining laboratory runs. All numbers in black are final.}
 
 %======================================================================
 \section{Introduction}
@@ -53,16 +46,17 @@ Since kernel version 6.12 (November 2024) the slice is no longer fixed. A task m
 
 This paper studies both with Koopman operator methods~\cite{koopman1931,mezic2005,brunton2022}. A Koopman operator represents a nonlinear system by a linear operator acting on functions of its state; Dynamic Mode Decomposition (DMD) and Extended Dynamic Mode Decomposition (EDMD) estimate it from data~\cite{schmid2010,williams2015}, and its eigenvalues describe how patterns in the data decay or oscillate. Burst sequences are short, noisy and nonstationary, which suits a model that is linear in a well-chosen space, can be updated online in nanoseconds, and comes with a spectrum that describes each task. Koopman models on delay coordinates are, however, closely related to autoregressive models~\cite{arbabi2017,pan2020}, so a third question is what the Koopman view adds beyond them.
 
-\textbf{Approach.} A measurement pipeline was built first, and every reconstructed quantity was validated against counters that the kernel keeps independently; this exposed two hazards that would otherwise have corrupted the data. Burst predictors were then compared on synthetic workloads, a bare-metal trace and four real programs, against ten baselines. Finally the loop was closed: a controller observes each task's bursts, predicts the next one and sets its EEVDF slice, first by polling the \texttt{/proc} file system and then through an Extended Berkeley Packet Filter (eBPF) program attached to the scheduler's tracepoint. The controller was evaluated in 444 paired runs: 264 on a two-core virtual machine, including real servers sharing a core with CPU-bound work, and 180 on a 28-CPU bare-metal machine with 1, 8 and 16 CPUs in use.
+\textbf{Approach.} A measurement pipeline was built first, and every reconstructed quantity was validated against counters that the kernel keeps independently; this exposed two hazards that would otherwise have corrupted the data. Burst predictors were then compared on synthetic workloads, a bare-metal trace and four real programs, against ten baselines. Finally the loop was closed: a controller observes each task's bursts, predicts the next one and sets its EEVDF slice, first by polling the \texttt{/proc} file system and then through an Extended Berkeley Packet Filter (eBPF) program attached to the scheduler's tracepoint. The controller was evaluated in 504 paired runs: 264 on a two-core virtual machine, 180 on a 28-CPU bare-metal machine with 1, 8 and 16 CPUs in use, and 60 with real servers on a second, 8-CPU bare-metal machine. A sched\_ext scheduler driven by the same predictor was then evaluated in 36 further runs.
 
-\textbf{Findings.} (i) On real programs, a log-scale Koopman predictor beats the textbook estimator in 32 of 36 threads, with 29\% lower error. (ii) It is numerically a log-scale autoregressive model, and neither nonlinear Koopman dictionaries, an Autoregressive Integrated Moving Average (ARIMA) model nor a neural network beats an autoregressive model with enough delays: what predicts CPU bursts is the log scale and the delay depth. (iii) Fed to EEVDF as slice requests, predictions cut the response time of short requests by 57--59\% on bare metal with 1, 8 and 16 CPUs at negligible cost, and the latency of real server requests by about \pend{a third}. (iv) How a prediction becomes a slice matters more than which predictor is used: a slice exactly equal to the true burst gives only 8--9\%, because the burst overruns its slice, while 1.5 times the burst gives 72\%. A short model explains this, and also predicts where a more accurate predictor helps, which the experiments confirm.
+\textbf{Findings.} (i) On real programs, a log-scale Koopman predictor beats the textbook estimator in 32 of 36 threads, with 29\% lower error. (ii) It is numerically a log-scale autoregressive model, and neither nonlinear Koopman dictionaries, an Autoregressive Integrated Moving Average (ARIMA) model nor a neural network beats an autoregressive model with enough delays: what predicts CPU bursts is the log scale and the delay depth. (iii) Fed to EEVDF as slice requests, predictions cut the response time of short requests by 57--59\% on bare metal with 1, 8 and 16 CPUs at negligible cost, and the latency of real servers' short requests by 34--77\%. (iv) How a prediction becomes a slice matters more than which predictor is used: a slice exactly equal to the true burst gives only 8--9\%, because the burst overruns its slice, while 1.5 times the burst gives 72\%. A short model explains this, and also predicts where a more accurate predictor helps, which the experiments confirm. (v) The same predictor can drive a complete scheduler: a sched\_ext policy that orders tasks by virtual time plus predicted burst beat stock EEVDF by 44\% on short requests and 41\% on long ones, while the same policy without predictions was far worse than stock Linux.
 
 \textbf{Contributions.}
 \begin{enumerate}
 \item A validated measurement pipeline for scheduler dynamics: trace capture without perturbation, ground truth from the kernel's \texttt{schedstat} counters, self-tests, and two documented measurement hazards (Section~\ref{sec:measure}).
 \item A burst-prediction study on synthetic workloads, a bare-metal trace and four real programs, against autoregressive, ARIMA, neural, gradient-boosting and nonlinear-Koopman baselines, with prediction intervals and per-prediction cost (Section~\ref{sec:pred}).
-\item A closed-loop controller that steers the unmodified EEVDF scheduler through slice requests, with an eBPF burst observer, a model of the slice margin, and an evaluation in 444 paired runs on synthetic and real workloads, on a virtual machine and on bare metal (Sections~\ref{sec:method} and~\ref{sec:closed}).
-\item A multi-core analysis, a machine-level Koopman change detector, an interactive trace visualizer, and a sched\_ext scheduler for bare-metal tests (Sections~\ref{sec:multicore}--\ref{sec:viz}).
+\item A closed-loop controller that steers the unmodified EEVDF scheduler through slice requests, with an eBPF burst observer, a model of the slice margin, and an evaluation in 504 paired runs on synthetic and real workloads, on a virtual machine and two bare-metal machines (Sections~\ref{sec:method} and~\ref{sec:closed}).
+\item A complete sched\_ext scheduler driven by the predictor, evaluated on bare metal (Section~\ref{sec:scx}).
+\item A multi-core analysis, a machine-level Koopman change detector and an interactive trace visualizer (Sections~\ref{sec:multicore}--\ref{sec:viz}).
 \end{enumerate}
 Section~\ref{sec:apps} summarizes applications of the same estimator above the operating system, and all code and data are released.
 
@@ -192,6 +186,7 @@ Platform & Kernel version & Capture & Runs \\
 Lab, 28 CPUs, bare metal (Trace~3) & 7.0 & perf & 1 (75\,s) \\
 Lab, Intel Core i7-14700, 28 CPUs, bare metal & 7.0 & tracefs, counters & 42 + 24 \\
 \quad same machine, closed loop & 7.0 & counters, eBPF & 180 \\
+Lab, Intel Core i7-7700, 8 CPUs, bare metal & 7.0 & tracefs, eBPF, sched\_ext & 3 + 60 + 36 \\
 Intel Xeon Virtual Machine (VM), 2 virtual CPUs & 6.18 & tracefs & 12 + 24 + 3 \\
 \quad same VM, closed loop & 6.18 & counters, eBPF & 264 \\
 ARM VM, 4 virtual CPUs (Apple host) & 6.8 & counters & 9 + 24 \\
@@ -199,7 +194,7 @@ ARM VM, 4 virtual CPUs (Apple host) & 6.8 & counters & 9 + 24 \\
 \end{tabular}
 \end{table}
 
-\textbf{Platforms} (Table~\ref{tab:platforms}). A 28-CPU bare-metal lab machine (kernel version 7.0) recorded Trace~3. A second lab machine, used for the bare-metal scaling, frequency, change-detection and closed-loop experiments, has an Intel Core i7-14700 with 8 performance cores of two hardware threads each and 12 efficiency cores (28 CPUs; Ubuntu 26.04, kernel version 7.0); CPUs 0--15 are the performance-core threads, as their peak clock of 5.0--5.45\,GHz against 4.2\,GHz for CPUs 16--27 shows, and the default EEVDF slice is 2.8\,ms. The virtual platforms are an Intel Xeon Virtual Machine (VM) with two virtual CPUs under the Kernel-based Virtual Machine (KVM) hypervisor (kernel version 6.18, 250\,Hz tick, no kernel preemption) and an ARM virtual machine with four virtual CPUs on an Apple host (kernel version 6.8). All run EEVDF.
+\textbf{Platforms} (Table~\ref{tab:platforms}). A 28-CPU bare-metal lab machine (kernel version 7.0) recorded Trace~3. A second lab machine, used for the bare-metal scaling, frequency, change-detection and closed-loop experiments, has an Intel Core i7-14700 with 8 performance cores of two hardware threads each and 12 efficiency cores (28 CPUs; Ubuntu 26.04, kernel version 7.0); CPUs 0--15 are the performance-core threads, as their peak clock of 5.0--5.45\,GHz against 4.2\,GHz for CPUs 16--27 shows, and the default EEVDF slice is 2.8\,ms. A third lab machine, used for the real-program captures, the real-server loop and the sched\_ext scheduler, has an Intel Core i7-7700 with 4 cores of two hardware threads each (8 CPUs; Ubuntu 24.04, kernel version 7.0); its tracing self-test also saw every switch (201 out, 201 in). The virtual platforms are an Intel Xeon Virtual Machine (VM) with two virtual CPUs under the Kernel-based Virtual Machine (KVM) hypervisor (kernel version 6.18, 250\,Hz tick, no kernel preemption) and an ARM virtual machine with four virtual CPUs on an Apple host (kernel version 6.8). All run EEVDF.
 
 \textbf{Workloads.} Synthetic workloads are small programs: a CPU-bound loop; an Input/Output (I/O)-bound loop that writes 10\,kB and sleeps 50\,ms; and a \emph{phased} positive control that alternates every 2\,s between bursts of 1\,ms and 20\,ms of CPU time, so its bursts have known structure. The lab trace (\emph{Trace~3}) ran three CPU-bound and three I/O-bound jobs. VM captures ran these plus two phased jobs, pinned to 1 or 2 cores, overloaded, or with a scheduled load drop, each three times. Real programs and the closed-loop workloads are described in Sections~\ref{sec:pred} and~\ref{sec:closed}.
 
@@ -217,7 +212,7 @@ The 42 bare-metal captures of the second lab machine (903 processes; Section~\re
 
 \textbf{Hazard 1: the observer effect.} A first capture tool streamed events out of the kernel while recording. Each event woke the reader, which preempted the workload and produced further events: a feedback loop of about 50{,}000 context switches per second on any core with spare capacity. Traces grew from 0.5--0.8\,MB to 15--23\,MB and counts disagreed with the kernel by up to 9\%. Recording into a large kernel buffer and reading it once after the run removed the loop. One contaminated capture is kept as evidence.
 
-\textbf{Hazard 2: missing idle exits on a VM.} On the Intel VM's kernel, part of the \texttt{sched\_switch} events for a CPU leaving idle are never emitted; tracefs and perf agree, and the ring buffer reports no loss. In seven self-tests a task that slept 201 times was seen switching back in only 1 to 176 times. Neither lab machine shows it: there were zero unmatched switch-outs in Trace~3 and in all 42 captures of the second lab machine, whose self-test saw a task switched out 204 times and back in 204 times. The cause was not determined. The parser therefore counts unmatched switch-outs, the capture tool runs a self-test, and VM experiments keep every core busy, either with workload or with one lowest-priority (\texttt{SCHED\_IDLE}) spinner per core, which receives only CPU time nothing else wants. With busy cores the counts match the kernel: in a 15\,s real-program test without spinners there were 1{,}639 unmatched switch-outs, and with them 186 across three 60\,s captures and 310{,}000 timeslices.
+\textbf{Hazard 2: missing idle exits on a VM.} On the Intel VM's kernel, part of the \texttt{sched\_switch} events for a CPU leaving idle are never emitted; tracefs and perf agree, and the ring buffer reports no loss. In seven self-tests a task that slept 201 times was seen switching back in only 1 to 176 times. None of the lab machines shows it: there were zero unmatched switch-outs in Trace~3, in all 42 captures of the second lab machine and in the 3 captures of the third, and their self-tests saw every switch back in (204 of 204 and 201 of 201). The cause was not determined. The parser therefore counts unmatched switch-outs, the capture tool runs a self-test, and VM experiments keep every core busy, either with workload or with one lowest-priority (\texttt{SCHED\_IDLE}) spinner per core, which receives only CPU time nothing else wants. With busy cores the counts match the kernel: in a 15\,s real-program test without spinners there were 1{,}639 unmatched switch-outs, and with them 186 across three 60\,s captures and 310{,}000 timeslices.
 
 %======================================================================
 \section{Burst Prediction}\label{sec:pred}
@@ -263,7 +258,7 @@ gradient boosting & 1.24, 0 & 0.82, 33 & 0.79, 34 \\
 \subsection{Real programs}
 To test beyond synthetic loops, the following programs were traced together on both VM cores in three captures of 60\,s: a Redis~7.0 server driven by a paced client (mostly GET and SET, with occasional range and sort commands on a 30{,}000-element list); a Node.js~22 Hypertext Transfer Protocol (HTTP) server whose client alternates between phases of light and heavy JavaScript Object Notation (JSON) requests; a Python process running Structured Query Language (SQL) queries of mixed size (point lookups, range aggregates, full scans) against SQLite~3.45; real-time H.264 encoding of a synthetic video with ffmpeg (all encoder threads); and the two load generators. A parallel gcc build and xz compression ran as untracked background load. Over the 36 threads with at least 60 bursts, CPU time agrees with \texttt{schedstat} within 1.8\% and wait time within 1.5\% (medians); 28 threads are within 5\%, and the others are ffmpeg helper threads that run about 12\,$\mu$s per slice, where a few microseconds of tracepoint overhead is a large fraction.
 
-Log-EDMD beats the textbook estimator in 32 of 36 threads, with median error ratio 0.71 ($p_\text{Holm}=10^{-5}$; Table~\ref{tab:pred}, Fig.~\ref{fig:real}). The gain is largest for Redis and SQLite (median ratios 0.55 and 0.56), whose request bursts are short with occasional long ones: the exponential average chases each long burst and then overestimates the short ones that follow, while the log-scale operator treats a long burst as a large but transient deviation. \pending{bare-metal captures of the same four programs.}
+Log-EDMD beats the textbook estimator in 32 of 36 threads, with median error ratio 0.71 ($p_\text{Holm}=10^{-5}$; Table~\ref{tab:pred}, Fig.~\ref{fig:real}). The gain is largest for Redis and SQLite (median ratios 0.55 and 0.56), whose request bursts are short with occasional long ones: the exponential average chases each long burst and then overestimates the short ones that follow, while the log-scale operator treats a long burst as a large but transient deviation. The same four programs were captured three times on the 8-CPU bare-metal machine. For the 24 threads that used at least 0.5\,s of CPU, traced CPU time agreed with the kernel within 3.1\% (median 0.33\%), with no lost events; idle ffmpeg helper threads, with a few tens of microseconds of CPU each, are not comparable. Log-EDMD beat the textbook estimator in 24 of 30 threads (median error ratio 0.81, sign test $p=0.0014$), again most for Redis and SQLite (0.55 and 0.56, as on the VM) and the load generators (0.71), and least for ffmpeg (0.94). The spectral picture repeated too: SQLite's eigenvalues were again real, and eigenvalues identified the program a window came from with 77\% balanced accuracy, against 99\% for simple burst statistics.
 
 \begin{figure}[t]
 \centering
@@ -333,7 +328,7 @@ For 60 processes from the validated captures (fit on 60\%, calibrate on 20\%, te
 %======================================================================
 \section{Closing the Loop: Steering EEVDF}\label{sec:closed}
 %======================================================================
-The controller was first developed and evaluated on the two-core Intel VM (Sections~\ref{sec:poll} and~\ref{sec:vmebpf}); the eBPF experiment was then repeated on the bare-metal lab machine with 1, 8 and 16 CPUs (Section~\ref{sec:bare}). The real-server experiment (Section~\ref{sec:realloop}) ran on the VM; \pending{its bare-metal repeat}.
+The controller was first developed and evaluated on the two-core Intel VM (Sections~\ref{sec:poll} and~\ref{sec:vmebpf}); the eBPF experiment was then repeated on the bare-metal lab machine with 1, 8 and 16 CPUs (Section~\ref{sec:bare}). Real servers were steered on the VM (Section~\ref{sec:realloop}) and on a second bare-metal machine (Section~\ref{sec:realbare}), and Section~\ref{sec:scx} replaces the scheduler itself with a sched\_ext policy driven by the same predictor.
 
 \subsection{Set-up}
 \textbf{Workload.} Request tasks, written in C, wake on a fixed period of 15, 20 or 25\,ms and do one CPU burst each, timed with the thread CPU clock. Burst lengths come from a two-regime log-autoregressive process (coefficient 0.6, noise 0.35): short bursts near 0.3\,ms and long ones near 4\,ms, switching regime with probability 0.05 per request. Each request logs its deadline, wake-up time and finish time; if it finishes after the next deadline, the next request starts at once. CPU hogs (CPU-bound background tasks) spin and count the CPU time they receive, which measures throughput. All tasks are pinned to the CPUs under test.
@@ -348,7 +343,7 @@ The controller was first developed and evaluated on the two-core Intel VM (Secti
 \caption{Polling agent: mean response of short requests (ms) and change against stock Linux; change in CPU hogs' throughput}\label{tab:poll}
 \begin{tabular}{@{}lccc@{}}
 \toprule
-\hd{Policy} & \hd{1 CPU (8 runs)} & \hd{2 CPUs (6 runs)} & \hd{hogs, 1 CPU} \\
+Policy & 1 CPU (8 runs) & 2 CPUs (6 runs) & hogs, 1 CPU \\
 \midrule
 stock Linux & 2.14 & 2.22 & -- \\
 fixed 0.1\,ms & 2.15 (0\%) & 2.25 (+2\%) & $-$0.6\% \\
@@ -377,7 +372,7 @@ A first agent polled \texttt{/proc/<pid>/schedstat} and \texttt{status} every 10
 \caption{eBPF agent, one CPU, six paired runs per policy: short-request response (ms, change against stock Linux), median wake-up latency (ms) and context switches per second}\label{tab:sweep}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
-\hd{Policy} & $c$ & \hd{short-request response} & \hd{wake-up p50} & \hd{switches/s} \\
+Policy & $c$ & short-request response & wake-up p50 & switches/s \\
 \midrule
 stock Linux & -- & 2.27 & 1.88 & 1296 \\
 \midrule
@@ -402,7 +397,7 @@ stock Linux & -- & 2.27 & 1.88 & 1296 \\
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.95\textwidth]{e9_margin_real.png}
-\caption{Left: short-request response against the slice margin $c$ (eBPF agent, one VM CPU with three hogs; bars: range over six paired runs); the oracle knows each burst exactly. Right: change in mean latency of real programs sharing one CPU with three hogs (ten paired runs), against stock EEVDF. Both panels: two-core VM; \pend{the right panel will be repeated on bare metal}.}\label{fig:closed}
+\caption{Left: short-request response against the slice margin $c$ (eBPF agent, one VM CPU with three hogs; bars: range over six paired runs); the oracle knows each burst exactly. Right: change in mean latency of real programs sharing one CPU with three hogs (ten paired runs), against stock EEVDF. Both panels: two-core VM.}\label{fig:closed}
 \end{figure}
 
 An eBPF program on the \texttt{sched\_switch} tracepoint reports every burst of a tracked task the moment it ends, through a ring buffer, and a C agent updates the task's operator and sets its slice (Algorithm~\ref{alg:ctl}). The agent uses 0.33\% of one core, against about 3\% for the polling agent, and the CPU hogs' throughput stayed within $\pm1\%$ of stock Linux under every predictor.
@@ -456,9 +451,9 @@ Costs stayed small. Hog throughput was within $\pm0.8\%$ of stock Linux under ev
 \begin{table}[t]
 \centering
 \caption{Real programs sharing one CPU with three hogs: change in mean latency against stock Linux (ten paired runs, margin $c=1.5$)}\label{tab:realloop}
-\begin{tabular}{@{}lBBBB@{}}
+\begin{tabular}{@{}lcccc@{}}
 \toprule
-\hd{Requests} & \hd{stock (ms)} & \hd{hand-set} & \hd{textbook EWMA} & \hd{log-EDMD} \\
+Requests & stock (ms) & hand-set & textbook EWMA & log-EDMD \\
 \midrule
 Redis GET & 0.63 & $-$27\% & $-$51\% & $-$44\% \\
 Redis SET & 0.63 & $-$23\% & $-$48\% & $-$40\% \\
@@ -477,9 +472,65 @@ Node.js p99 & 334 & 0\% & 0\% & +4\% \\
 
 A Redis server, a Node.js server and a SQLite worker shared one CPU with three hogs, while their clients ran on the other CPU and timed every request end to end (Redis, Node.js) or from its scheduled start (SQLite). The agent controlled the three server threads. Table~\ref{tab:realloop} and Fig.~\ref{fig:closed} (right) give the results over ten paired repetitions.
 
-Predicted slices made short requests faster in all three programs. Redis requests overall became \pend{31\%} (log-EDMD) and \pend{37\%} (textbook estimator) faster, SQLite point queries \pend{31\%} and \pend{8\%}, and Node.js light requests \pend{14\%} ($p=\pend{0.01}$) and \pend{5\%} (not significant); the log-EDMD changes for Redis and SQLite held in \pend{10 of 10} pairs ($p=\pend{0.002}$). Log-EDMD was \pend{25\%} better than the textbook estimator on SQLite point queries (\pend{10 of 10} pairs) and \pend{10\%} worse on Redis (\pend{1 of 10}). Heavy requests, the overall mean of Node.js and SQLite, and the 99th percentiles of all three programs changed by less than \pend{4\%} under either predictor (not significant), and hogs lost \pend{1\%} of their CPU time. A hand-set minimum slice for the three servers did best for SQLite point queries (\pend{$-54\%$}) and Node.js light requests (\pend{$-28\%$}) but worst for Redis (\pend{$-16\%$}, with its 99th percentile \pend{9\%} higher), and it requires knowing in advance which tasks are latency-sensitive; the predictors needed no such knowledge.
+Predicted slices made short requests faster in all three programs. Redis requests overall became 31\% (log-EDMD) and 37\% (textbook estimator) faster, SQLite point queries 31\% and 8\%, and Node.js light requests 14\% ($p=0.01$) and 5\% (not significant); the log-EDMD changes for Redis and SQLite held in 10 of 10 pairs ($p=0.002$). Log-EDMD was 25\% better than the textbook estimator on SQLite point queries (10 of 10 pairs) and 10\% worse on Redis (1 of 10). Heavy requests, the overall mean of Node.js and SQLite, and the 99th percentiles of all three programs changed by less than 4\% under either predictor (not significant), and hogs lost 1\% of their CPU time. A hand-set minimum slice for the three servers did best for SQLite point queries ($-54\%$) and Node.js light requests ($-28\%$) but worst for Redis ($-16\%$, with its 99th percentile 9\% higher), and it requires knowing in advance which tasks are latency-sensitive; the predictors needed no such knowledge.
 
-\pending{the same real-server experiment on bare metal.}
+\subsection{Real servers on bare metal}\label{sec:realbare}
+\begin{table}[t]
+\centering
+\caption{Real servers on bare metal (Intel Core i7-7700, kernel 7.0), sharing one CPU with three hogs: change against stock Linux (ten paired runs, margin $c=1.5$)}\label{tab:realbare}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Requests & stock (ms) & hand-set & textbook EWMA & log-EDMD \\
+\midrule
+Redis GET & 0.61 & $-$61\% & $-$66\% & $-$63\% \\
+Redis SET & 0.60 & $-$58\% & $-$64\% & $-$63\% \\
+Redis LRANGE & 6.06 & +24\% & +4\% & +22\% \\
+Redis, all & 0.77 & $-$39\% & $-$48\% & $-$43\% \\
+Redis p99 & 7.52 & +27\% & $-$1\% & +21\% \\
+SQLite point & 1.89 & $-$82\% & $-$23\% & $-$77\% \\
+SQLite range & 4.18 & +39\% & +9\% & +32\% \\
+SQLite scan & 298 & +2\% & +3\% & +3\% \\
+SQLite p99 & 321 & +1\% & +2\% & +1\% \\
+Node.js light & 4.20 & $-$35\% & $-$34\% & $-$34\% \\
+Node.js heavy & 147 & $-$1\% & +0.5\% & $-$1\% \\
+Node.js p99 & 254 & 0\% & +5\% & $-$1\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{e12_real_baremetal.png}
+\caption{Real servers on bare metal sharing one CPU with three hogs: change against stock EEVDF (bars: mean of ten paired runs; whiskers: range of the per-run changes).}\label{fig:realbare}
+\end{figure}
+
+The real-server experiment was repeated on the 8-CPU bare-metal machine, with the servers on CPU~0 and their clients on CPU~1 as before, ten paired repetitions of six policies (Table~\ref{tab:realbare}, Fig.~\ref{fig:realbare}). The effect was larger than on the VM. With log-EDMD at $c=1.5$, Redis requests overall became 43\% faster (GET and SET 63\%), SQLite point queries 77\% and Node.js light requests 34\%; the textbook estimator gave 48\%, 23\% and 34\%. Every one of these changes held in 10 of 10 pairs ($p=0.002$). Log-EDMD's point queries were 70\% faster than the textbook estimator's (10 of 10 pairs), while on Redis overall it was 11\% slower (better in 1 of 10). Heavy requests and SQLite scans changed by at most 3\%, hogs lost 1.1\% of their CPU time, and the agent used 0.4\% of one core.
+
+The cost appeared in medium-sized requests. With log-EDMD, Redis LRANGE requests took 22\% longer, SQLite range queries 32\% longer and Redis's 99th-percentile latency rose by 21\% (10 of 10 pairs), while the textbook estimator raised them by at most 9\%. The log-scale operator predicts short bursts for these servers more confidently, so an occasional medium request overruns its slice and loses its place, the penalty $\Delta$ of Section~\ref{sec:margin}. The hand-set minimum slice showed the same pattern more strongly (+24\%, +39\% and +27\%). A margin that grows with the spread of a task's recent bursts would address this; it was not tested.
+
+\subsection{A Koopman scheduler in the kernel (sched\_ext)}\label{sec:scx}
+\begin{table}[t]
+\centering
+\caption{sched\_ext scheduler on bare metal (Intel Core i7-7700, 8 CPUs, 24 hogs, 32 request tasks; six paired runs): mean response (ms) and change against stock EEVDF; hog throughput change}\label{tab:scx}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Policy & short requests & long requests & all requests & short, p99 & hogs \\
+\midrule
+stock EEVDF & 2.51 & 20.6 & 11.5 & 10.0 & -- \\
+sched\_ext, no prediction & 35.8 (+1327\%) & 42.8 (+107\%) & 39.2 (+242\%) & 49.9 (+397\%) & +34\% \\
+sched\_ext, EWMA, margin 1.5 & 1.56 ($-$38\%) & 12.8 ($-$38\%) & 7.16 ($-$38\%) & 11.5 (+14\%) & $-$0.3\% \\
+sched\_ext, log-EDMD, margin 1 & 1.35 ($-$46\%) & 15.0 ($-$27\%) & 8.11 ($-$29\%) & 9.66 ($-$4\%) & +1.2\% \\
+sched\_ext, log-EDMD, margin 1.5 & \textbf{1.41 ($-$44\%)} & 12.3 ($-$41\%) & 6.82 ($-$41\%) & 9.11 ($-$9\%) & $-$0.5\% \\
+sched\_ext, log-EDMD, margin 2 & 1.55 ($-$38\%) & 12.0 ($-$42\%) & 6.73 ($-$41\%) & 10.1 (+1\%) & $-$1.9\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Slice requests change only one input of EEVDF. The release also contains \texttt{scx\_koopman}, a complete sched\_ext scheduler in which the prediction decides the order as well: an eBPF program keeps one global queue ordered by virtual time plus predicted next burst, measures every burst, and gives each task a slice of the margin times its prediction, while a user-space agent updates each task's log-scale operator by recursive least squares, as in Algorithm~\ref{alg:ctl}. Tasks without a prediction get the sched\_ext default slice of 20\,ms. It was run on the 8-CPU bare-metal machine with 24 hogs and 32 request tasks, six paired repetitions of six policies (Table~\ref{tab:scx}). The kernel loaded and unloaded it cleanly in all 30 runs that used it.
+
+Without predictions the same scheduler was far worse than stock Linux: every task, hogs included, received 20\,ms slices, hogs gained 34\% more CPU time, and short requests took 14 times longer. With predictions it beat stock EEVDF on every request type. Log-EDMD at margin 1.5 cut the mean response of short requests by 44\% and of long requests by 41\% (6 of 6 pairs each), lowered the 99th percentile of short requests by 9\%, and left hog throughput within 0.5\%. It was 9\% faster than the textbook estimator on short requests (6 of 6 pairs, $p=0.031$), whose 99th percentile was 14\% worse than stock. The price is context switches, 5.6 times as many as stock Linux. The margin behaves as in Section~\ref{sec:margin}: a margin of 1 was best for short requests but cost long ones, and margins of 1.5--2 balanced the two.
+
+
 
 %======================================================================
 \section{Multi-Core Scheduling}\label{sec:multicore}
@@ -589,7 +640,9 @@ Nonlinear observables & no gain & log-AR($p^*$) \\
 Steering EEVDF, bare metal (1, 8, 16 CPUs) & short requests 57--59\% faster, throughput within $\pm0.8\%$ & stock Linux \\
 Steering EEVDF, VM (1 CPU) & short requests 45\% faster, no throughput loss & stock Linux \\
 Koopman vs textbook in loop & better in 48/54 bare-metal and 19/24 VM runs & textbook estimator \\
-Real servers (VM) & \pend{Redis 31--37\%, SQLite points 31\% faster; tails unchanged} & stock Linux \\
+Real servers, bare metal & Redis 43\%, SQLite points 77\%, Node.js light 34\% faster; Redis p99 21\% slower & stock Linux \\
+Real servers, VM & Redis 31--37\%, SQLite points 31\% faster; tails unchanged & stock Linux \\
+sched\_ext scheduler, bare metal & short requests 44\%, long 41\% faster; no prediction: 14 times slower & stock EEVDF \\
 Load change, traces & 3/3, 77--94\,ms & baselines 0/3 \\
 Load change, live & 29/36 (VMs), 8/18 (28 CPUs) & simple monitors as good or better \\
 I/O slowdown after load drop & gone with \texttt{performance} governor & default governor \\
@@ -599,23 +652,23 @@ I/O slowdown after load drop & gone with \texttt{performance} governor & default
 
 \textbf{What the Koopman view contributes.} Table~\ref{tab:summary} collects the results. For burst prediction, the Koopman framing earns its place through the log scale, the delay coordinates, the cheap online update and the spectrum, not through nonlinear observables: on scheduler data, Hankel DMD and a log-scale autoregressive model are the same predictor, and richer models add nothing. This is a useful negative result: a practitioner choosing a predictor for a scheduler should pick a log-scale linear model with enough delays and spend the remaining effort elsewhere.
 
-\textbf{Where the gain comes from.} The practical value is in the loop. Predicted bursts, turned into EEVDF slice requests with a margin of about 1.5, made short requests 57--59\% faster on contended bare-metal cores with 1, 8 and 16 CPUs (40--45\% on the VM), cost nothing measurable in throughput when observed through eBPF, and sped up real servers' short requests on the VM by about \pend{a third}. How the forecast becomes a slice matters more than which forecaster is used: the wrong margin erases the gain even for a perfect predictor, and the right one lets an imperfect predictor recover most of it. Within that, a more accurate predictor helps where slices are tight, as the model of Section~\ref{sec:margin} predicts; on bare metal, with a default slice twice as long, its advantage held up to $c=2$. On the polling agent the conformal margin helped the textbook estimator but hurt Koopman, whose wider log-scale intervals pushed slices towards the default; a fixed multiplicative margin worked better for both.
+\textbf{Where the gain comes from.} The practical value is in the loop. Predicted bursts, turned into EEVDF slice requests with a margin of about 1.5, made short requests 57--59\% faster on contended bare-metal cores with 1, 8 and 16 CPUs (40--45\% on the VM), cost nothing measurable in throughput when observed through eBPF, and sped up real servers' short requests by 34--77\% on bare metal (about a third on the VM). Used inside a complete sched\_ext scheduler, the same predictor turned a policy that was far worse than stock Linux into one that was 41--44\% faster. How the forecast becomes a slice matters more than which forecaster is used: the wrong margin erases the gain even for a perfect predictor, and the right one lets an imperfect predictor recover most of it. Within that, a more accurate predictor helps where slices are tight, as the model of Section~\ref{sec:margin} predicts; on bare metal, with a default slice twice as long, its advantage held up to $c=2$. On the polling agent the conformal margin helped the textbook estimator but hurt Koopman, whose wider log-scale intervals pushed slices towards the default; a fixed multiplicative margin worked better for both.
 
-\textbf{Lessons for practitioners.} (1) Validate traces against \texttt{schedstat} before trusting them; both hazards found in this study were silent. (2) Predict bursts on a log scale. (3) If a latency-sensitive task's bursts are short, a slice request is a supported, low-risk way to serve it sooner on stock Linux, but the slice must exceed the burst with a margin; a slice equal to the burst can be worse than none. (4) A hand-set minimum slice can beat prediction for a task whose bursts are always short, but hurts tasks whose bursts vary.
+\textbf{Lessons for practitioners.} (1) Validate traces against \texttt{schedstat} before trusting them; both hazards found in this study were silent. (2) Predict bursts on a log scale. (3) If a latency-sensitive task's bursts are short, a slice request is a supported, low-risk way to serve it sooner on stock Linux, but the slice must exceed the burst with a margin; a slice equal to the burst can be worse than none. (4) A hand-set minimum slice can beat prediction for a task whose bursts are always short, but hurts tasks whose bursts vary. (5) Watch the medium-sized requests: a confident predictor gives them slices that are too short.
 
-\textbf{Limits.} On the VM, the tail latency and heavy requests of real servers did not improve, and for some programs a hand-set slice was better; on bare metal the synthetic short requests' 99th percentile improved by about a third, while long requests took up to 3\% longer with log-EDMD at $c=1.5$. The gains need contention: on the idle lab machine nothing queued. The margin that worked best here (1.5) depends on the overhead and on the tick and preemption model of the kernel.
+\textbf{Limits.} Heavy requests of real servers did not improve. On bare metal, log-EDMD made medium-sized Redis and SQLite requests 22--32\% slower and Redis's 99th percentile 21\% slower, and for some programs a hand-set slice was better. For the synthetic workload, the 99th percentile of short requests improved by about a third, while long requests took up to 3\% longer with log-EDMD at $c=1.5$. The gains need contention: on the idle lab machine nothing queued. The margin that worked best here (1.5) depends on the overhead and on the tick and preemption model of the kernel.
 
-\textbf{Threats to validity.} The closed loop was confirmed on one bare-metal machine with a hybrid processor, using only its performance cores; other processors and kernels may need another margin. The real-program loop ran only on the VM (two virtual CPUs, a 250\,Hz tick, no kernel preemption), and covers three servers on one contended core. The closed-loop request workload is synthetic. The bare-metal frequency test supports, but does not prove, the power-management explanation of the slowdown in Trace~3, which came from another machine. The multi-core simulator is idealized; an EEVDF simulator built for this study did not reproduce the measured closed-loop effects and is not used. Network numbers come from the original study, and the market result reproduces one published event.
+\textbf{Threats to validity.} The closed loop with the synthetic workload was confirmed on one bare-metal machine with a hybrid processor, using only its performance cores, and the real-server loop on a second, older bare-metal machine; other processors and kernels may need another margin. The real-server loop covers three servers on one contended core. The sched\_ext scheduler is a simple global-queue design tested on one machine with six paired runs; its comparison with stock EEVDF changes the whole scheduler, not only the prediction, which is why the same scheduler without predictions is reported alongside. The closed-loop request workload is synthetic. The bare-metal frequency test supports, but does not prove, the power-management explanation of the slowdown in Trace~3, which came from another machine. The multi-core simulator is idealized; an EEVDF simulator built for this study did not reproduce the measured closed-loop effects and is not used. Network numbers come from the original study, and the market result reproduces one published event.
 
 %======================================================================
 \section{Conclusion and Future Work}
 %======================================================================
-A Koopman operator on log-scale delay coordinates predicts CPU bursts better than the textbook estimator, by 29\% on real programs; it is an autoregressive model in disguise, and nonlinear observables do not improve it. Used to set EEVDF slice requests with a margin, it makes short requests 57--59\% faster on the stock Linux scheduler on bare metal with 1, 8 and 16 CPUs at negligible cost, beats the textbook estimator in 48 of 54 paired runs, and makes real server requests about \pend{a third} faster on a virtual machine; a simple model explains why the margin is needed and where predictor accuracy matters.
+A Koopman operator on log-scale delay coordinates predicts CPU bursts better than the textbook estimator, by 29\% on real programs; it is an autoregressive model in disguise, and nonlinear observables do not improve it. Used to set EEVDF slice requests with a margin, it makes short requests 57--59\% faster on the stock Linux scheduler on bare metal with 1, 8 and 16 CPUs at negligible cost, beats the textbook estimator in 48 of 54 paired runs, and makes real servers' short requests 34--77\% faster on bare metal, at a cost to some medium-sized requests. A complete sched\_ext scheduler driven by the same predictor beat stock EEVDF by 44\% on short and 41\% on long requests. A simple model explains why the margin is needed and where predictor accuracy matters.
 
-\pending{the real-server loop and the real-program captures on bare metal, and a run of} \texttt{scx\_koopman}, a sched\_ext scheduler included in the release that orders tasks by virtual time plus predicted burst and sets each slice from the prediction; it compiles and the lab kernel supports sched\_ext, but it has not yet been run. Further directions are choosing the margin online from the predictor's error distribution and evaluating on server workloads with service-level objectives.
+Further directions are a margin that adapts to the spread of each task's recent bursts, which should protect medium-sized requests; per-core queues and load balancing for the sched\_ext scheduler; evaluation on more processors; and evaluation on server workloads with service-level objectives.
 
 \section*{Data and Code Availability}
-Capture kit, eBPF observer, controller, sched\_ext policy, parsers, validation, simulators, all analyses and data (138 validated captures and counter runs, 66 of them from the bare-metal lab machine, and 444 closed-loop runs, 180 of them on bare metal), the EIGENWORLD reproduction and the visualizer are at \url{https://github.com/SaarthakManocha/Koopman-Operator-Theory-Research}; its README lists the script behind each table and figure.
+Capture kit, eBPF observer, controller, sched\_ext policy, parsers, validation, simulators, all analyses and data (141 validated captures and counter runs, 69 of them on bare metal, and 540 closed-loop runs, 276 of them on bare metal), the EIGENWORLD reproduction and the visualizer are at \url{https://github.com/SaarthakManocha/Koopman-Operator-Theory-Research}; its README lists the script behind each table and figure.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
